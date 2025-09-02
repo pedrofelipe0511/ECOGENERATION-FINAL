@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, sans-serif;
-  background: linear-gradient(135deg, #a0d995, #6e9e64);
+  background: linear-gradient(135deg, #a0d995, #a0d995);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,7 +16,7 @@ header {
   justify-content: flex-start; /* Alinha a logo à esquerda */
   align-items: center;
   color: #040609;
-  background-color: #ffffff;
+  background-color:  #007B4C;
   height: 80px;
   padding-left: 40px; /* Espaço da esquerda para a logo */
   box-sizing: border-box;
