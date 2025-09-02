@@ -1,94 +1,156 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
+/* Fundo */
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #a0d995;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: linear-gradient(135deg, #a0d995, #6e9e64);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
 
-.login-container {
-    background: whitesmoke;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
+/* Header grudado no topo */
+header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start; /* Alinha a logo à esquerda */
+  align-items: center;
+  color: #040609;
+  background-color: #ffffff;
+  height: 80px;
+  padding-left: 40px; /* Espaço da esquerda para a logo */
+  box-sizing: border-box;
+  
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #333;
+.logo {
+  max-width: 370px;
+  height: auto;
+  display: block;
 }
 
-fieldset.form-group {
-    border: none;
-    margin-bottom: 1rem;
+/* Card */
+.login-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 48px;
 }
 
+/* Título "Entrar" maior e alinhado à esquerda */
+.login-card .p,
+.login-card p.p {
+  font-size: 2rem;
+ 
+  width: 100%;
+  text-align: left;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+  color: #252525;
+  letter-spacing: 0,5px;
+  font-family: inherit; /* Garante a mesma fonte do restante da página */
+}
+
+/* Formulário */
+form {
+  width: 100%;
+}
+fieldset {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
 legend {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 0.5rem;
+  display: none;
 }
-
 label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
+  display: block;
+  text-align: left;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  color: #333;
+  width: 100%;
 }
-
 input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    margin-bottom: 1rem;
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-top: 0.3rem;
+  font-size: 1rem;
+  background: #f9f9f9;
+  outline: none;
+  box-sizing: border-box;
 }
-
 input:focus {
-    outline: none;
-    border-color: #1877f2;
-    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+  border-color: #1c9c5a;
+  background: #fff;
 }
 
-button {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #1877f2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
+/* Botão */
+button[type="submit"] {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+  color: white;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+button[type="submit"]:hover {
+  transform: scale(1.05);
 }
 
-button:hover {
-    background-color: #166fe5;
+/* Botão olho senha */
+#togglePassword {
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #555;
+  padding: 0 0.5rem;
+  margin-left: -2.5rem;
+  margin-top: 0.3rem;
+  position: relative;
+  z-index: 2;
 }
 
-.error-container {
-    margin-bottom: 1rem;
+/* Link extra */
+.extra {
+  margin-top: 1rem;
+  width: 100%;
+  text-align: center;
+}
+.extra a {
+  color: #1c9c5a;
+  text-decoration: none;
+  font-weight: bold;
+}
+.extra a:hover {
+  text-decoration: underline;
 }
 
-.error {
-    color: #dc2626;
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 480px) {
-    .login-container {
-        margin: 1rem;
-        padding: 1.5rem;
-    }
+.main-footer {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #fff;
+  text-align: center;
 }
