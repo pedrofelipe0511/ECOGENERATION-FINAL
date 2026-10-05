@@ -1,3 +1,12 @@
+function escaparHtml(valor) {
+  return String(valor == null ? '' : valor)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 /**
  * Função centralizada para exibir notificações com simple-notify.js
  * 
@@ -10,8 +19,10 @@
  */
 function notify(titulo, texto, tipo = 'info', posicao = 'top-right') {
   new Notify({
-    title: titulo,
-    text: texto,
+    // O simple-notify insere título e texto como HTML: escapamos para que
+    // dados do usuário (ex.: o nome) apareçam como texto e nunca virem código.
+    title: escaparHtml(titulo),
+    text: escaparHtml(texto),
     status: tipo,
     position: posicao,
     effect: 'fade',

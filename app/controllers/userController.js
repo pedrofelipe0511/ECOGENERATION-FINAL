@@ -1,9 +1,11 @@
 const bcrypt = require("bcryptjs");
+const { validationResult } = require('express-validator');
 const { usuariosModel } = require("../models/usuariosModel");
 const { diagnosticosModel } = require("../models/diagnosticosModel");
 const { comprasModel } = require("../models/comprasModel");
+const { regenerarSessao, salvarSessao, CHAVES_ADMIN } = require('../helpers/sessao');
+const { removerArquivo } = require('../helpers/imagens');
 const path = require('path');
-const fs = require('fs');
 const perfilDir = path.join(__dirname, '../public/imagens/perfil');
 
 const consultarCep = async (cep) => {
@@ -41,52 +43,50 @@ exports.perfil = async (req, res) => {
 
 exports.atualizarPerfil = async (req, res) => {
     const id = req.session.usuarioId;
-    let imagemAnterior;
-    try {
-        const nome = String(req.body.nome || '').trim();
-        const telefone = String(req.body.telefone || '').trim();
-        const cep = String(req.body.cep || '').trim();
-        const senhaAtual = String(req.body.senha_atual || '').trim();
-        const senha = String(req.body.senha || '').trim();
-        const confirmarSenha = String(req.body.confirmarSenha || '').trim();
 
-        const desejaAlterarSenha = Boolean(senhaAtual || senha || confirmarSenha);
+    // Qualquer saída sem sucesso descarta a imagem recém-enviada (evita arquivo órfão)
+    const voltarComErro = (texto) => {
+        if (req.file) removerArquivo(req.file.path);
+        req.session.flash = { status: 'error', text: texto };
+        return res.redirect('/perfil');
+    };
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return voltarComErro(errors.array()[0].msg);
+    }
+
+    try {
+        const nome = req.body.nome;
+        const telefone = req.body.telefone;
+        const cep = req.body.cep;
+        const senhaAtual = String(req.body.senha_atual || '');
+        const senha = String(req.body.senha || '');
+
+        const desejaAlterarSenha = Boolean(senhaAtual || senha);
         if (desejaAlterarSenha) {
-            if (!senhaAtual || !senha || !confirmarSenha) {
-                req.session.flash = { status: 'error', text: 'Para alterar a senha, informe a senha atual, a nova senha e a confirmação.' };
-                return res.redirect('/perfil');
-            }
-            if (senha.length < 6 || senha.length > 72) {
-                req.session.flash = { status: 'error', text: 'A nova senha deve ter entre 6 e 72 caracteres.' };
-                return res.redirect('/perfil');
-            }
-            if (senha !== confirmarSenha) {
-                req.session.flash = { status: 'error', text: 'A confirmação da nova senha não confere.' };
-                return res.redirect('/perfil');
+            if (!senhaAtual || !senha) {
+                return voltarComErro('Para alterar a senha, informe a senha atual, a nova senha e a confirmação.');
             }
             const hashAtual = await usuariosModel.findPasswordById(id);
             if (typeof hashAtual !== 'string' || !(await bcrypt.compare(senhaAtual, hashAtual))) {
-                req.session.flash = { status: 'error', text: 'Senha atual incorreta.' };
-                return res.redirect('/perfil');
+                return voltarComErro('Senha atual incorreta.');
             }
         }
 
-        if (!nome || nome.length > 100 || (telefone && !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(telefone)) ||
-            (cep && !/^\d{5}-?\d{3}$/.test(cep))) {
-            req.session.flash = { status: 'error', text: 'Verifique os dados informados no perfil.' };
-            return res.redirect('/perfil');
-        }
-
         const usuarios = await usuariosModel.findById(id);
-        if (!usuarios[0]) return res.redirect('/login');
-        imagemAnterior = usuarios[0].imagem_perfil_usuario;
+        if (!usuarios[0]) {
+            if (req.file) removerArquivo(req.file.path);
+            return res.redirect('/login');
+        }
+        const imagemAnterior = usuarios[0].imagem_perfil_usuario;
         const imagem = req.file ? `imagens/perfil/${req.file.filename}` : undefined;
         const dadosAtualizacao = {
             nome,
             telefone: telefone || null,
             cep: cep || null,
-            numero: String(req.body.numero || '').trim() || null,
-            complemento: String(req.body.complemento || '').trim() || null,
+            numero: req.body.numero || null,
+            complemento: req.body.complemento || null,
             imagem
         };
 
@@ -95,19 +95,17 @@ exports.atualizarPerfil = async (req, res) => {
         }
 
         await usuariosModel.update(id, dadosAtualizacao);
+        // Remove a imagem antiga (só se for uma foto de perfil deste usuário)
         if (req.file && imagemAnterior && imagemAnterior.startsWith(`imagens/perfil/perfil_${id}_`)) {
-            const antigo = path.basename(imagemAnterior);
-            const caminho = path.join(perfilDir, antigo);
-            if (caminho.startsWith(perfilDir) && fs.existsSync(caminho)) fs.unlinkSync(caminho);
+            const caminho = path.join(perfilDir, path.basename(imagemAnterior));
+            if (caminho.startsWith(perfilDir)) removerArquivo(caminho);
         }
         req.session.usuarioNome = nome;
         req.session.flash = { status: 'success', text: 'Perfil atualizado com sucesso.' };
         req.session.save(() => res.redirect('/perfil'));
     } catch (erro) {
         console.log(erro);
-        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-        req.session.flash = { status: 'error', text: 'Erro ao atualizar o perfil. Verifique os dados e tente novamente.' };
-        res.redirect('/perfil');
+        return voltarComErro('Erro ao atualizar o perfil. Verifique os dados e tente novamente.');
     }
 };
 
@@ -115,11 +113,11 @@ exports.atualizarPerfil = async (req, res) => {
 exports.excluirConta = async (req, res) => {
     try {
         await usuariosModel.delete(req.session.usuarioId);
+        // Sessão nova, sem o usuário — e o flash sobrevive para a próxima página
+        await regenerarSessao(req, CHAVES_ADMIN);
         req.session.flash = { status: 'success', text: 'Sua conta foi removida com sucesso.' };
-        req.session.save(() => {
-            req.session.destroy();
-            res.redirect('/login');
-        });
+        await salvarSessao(req);
+        res.redirect('/login');
     } catch (erro) {
         console.log(erro);
         req.session.flash = { status: 'error', text: 'Erro ao excluir conta. Tente novamente.' };

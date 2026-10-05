@@ -10,7 +10,11 @@
     <link rel="icon" href="/imagens/favicon2.png" type="image/png">
   <!-- simple-notify para Flash Messages -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
-    
+</head>
+<body>
+
+<section class="admin-wrapper">
+  <aside class="admin-sidebar">
     <nav class="admin-nav">
       <a href="/admin" class="nav-item">
         📊 Dashboard
@@ -65,11 +69,10 @@
                 </td>
                 <td>—</td>
                 <td>
-                  <a href="/admin/diagnosticos/deletar/<%= diag.id_diagnostico %>" 
-                     class="btn btn-tiny btn-danger"
-                     onclick="return confirm('Tem certeza que deseja deletar este diagnóstico?')">
-                    🗑️ Deletar
-                  </a>
+                  <form method="POST" action="/admin/diagnosticos/deletar/<%= diag.id_diagnostico %>" class="form-inline"
+                        onsubmit="return confirm('Tem certeza que deseja deletar este diagnóstico?')">
+                    <button type="submit" class="btn btn-tiny btn-danger">🗑️ Deletar</button>
+                  </form>
                 </td>
               </tr>
             <% }); %>

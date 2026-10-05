@@ -82,7 +82,7 @@
 .btn-submit {
     align-self: center;
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #2e7d32;
     color: white;
     border: none;
     border-radius: 5px;
@@ -92,7 +92,7 @@
 }
 
 .btn-submit:hover {
-    background-color: #45a049;
+    background-color: #1b5e20;
 }
 
 /* ── DARK MODE ──────────────────────────────────────────── */

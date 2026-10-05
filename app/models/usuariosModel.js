@@ -1,6 +1,10 @@
 const pool = require("../../config/pool_conexoes");
 const bcrypt = require("bcryptjs");
 
+// Valores de status_usuario (regra de negócio):
+// 0 = cadastrada, aguardando ativação por e-mail | 1 = ativa | 2 = excluída
+const STATUS_USUARIO = { INATIVO: 0, ATIVO: 1, EXCLUIDO: 2 };
+
 const usuariosModel = {
 
     create: async (dadosJson) => {
@@ -15,7 +19,7 @@ const usuariosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -27,7 +31,7 @@ const usuariosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -47,7 +51,7 @@ const usuariosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -59,7 +63,7 @@ const usuariosModel = {
             );
             return resultado[0] ? resultado[0].senha_usuario : null;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -83,12 +87,12 @@ const usuariosModel = {
     delete: async (id) => {
         try {
             const [resultado] = await pool.query(
-                "UPDATE usuarios SET status_usuario = 0 WHERE id_usuario = ?",
-                [id]
+                "UPDATE usuarios SET status_usuario = ? WHERE id_usuario = ?",
+                [STATUS_USUARIO.EXCLUIDO, id]
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -117,10 +121,10 @@ const usuariosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     }
 
 }
 
-module.exports = { usuariosModel };
+module.exports = { usuariosModel, STATUS_USUARIO };

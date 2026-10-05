@@ -90,12 +90,62 @@ const criarTemplateAtivacaoConta = ({ nomeUsuario, appBaseUrl, token }) => {
   });
 };
 
+// Separa "Nome <email@dominio>" em { nome, email }
+const lerRemetente = (valor) => {
+  const texto = String(valor || '').trim();
+  const m = texto.match(/^(.*)<([^>]+)>$/);
+  return m ? { nome: m[1].trim().replace(/^"|"$/g, ''), email: m[2].trim() } : { nome: '', email: texto };
+};
+
+// Lê o corpo da resposta de erro uma única vez (JSON quando possível)
+const lerDetalheErro = async (resposta) => {
+  const texto = await resposta.text();
+  try { return JSON.parse(texto); } catch (erro) { return texto; }
+};
+
+// Estratégias de envio: mesma entrada, mesma saída — o resto do sistema
+// só conhece enviarEmail(). O provedor é escolhido por EMAIL_PROVIDER.
+const provedores = {
+  // Resend: exige domínio verificado para enviar a qualquer destinatário
+  resend: {
+    chave: 'RESEND_API_KEY',
+    enviar: (apiKey, { para, assunto, html }) => fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: process.env.EMAIL_FROM, to: [para], subject: assunto, html })
+    })
+  },
+  // Brevo: aceita um remetente validado por e-mail (sem domínio próprio)
+  brevo: {
+    chave: 'BREVO_API_KEY',
+    enviar: (apiKey, { para, assunto, html }) => {
+      const remetente = lerRemetente(process.env.EMAIL_FROM);
+      return fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': apiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          sender: { name: remetente.nome || 'EcoGeneration', email: remetente.email },
+          to: [{ email: para }],
+          subject: assunto,
+          htmlContent: html
+        })
+      });
+    }
+  }
+};
+
 const enviarEmail = async ({ para, assunto, html }) => {
   const emailDestino = String(para || '').trim();
-  const apiKey = process.env.RESEND_API_KEY;
+  const nomeProvedor = (process.env.EMAIL_PROVIDER || 'resend').toLowerCase();
+  const provedor = provedores[nomeProvedor];
 
+  if (!provedor) {
+    throw new Error(`EMAIL_PROVIDER inválido: use ${Object.keys(provedores).join(' ou ')}`);
+  }
+
+  const apiKey = process.env[provedor.chave];
   if (!apiKey) {
-    throw new Error('RESEND_API_KEY não configurada');
+    throw new Error(`${provedor.chave} não configurada`);
   }
 
   if (!process.env.EMAIL_FROM) {
@@ -106,31 +156,12 @@ const enviarEmail = async ({ para, assunto, html }) => {
     throw new Error('Destinatário não informado');
   }
 
-  const resposta = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: process.env.EMAIL_FROM,
-      to: [emailDestino],
-      subject: assunto,
-      html
-    })
-  });
+  const resposta = await provedor.enviar(apiKey, { para: emailDestino, assunto, html });
 
   if (!resposta.ok) {
-    let detalhe;
-    try {
-      detalhe = await resposta.json();
-    } catch (erro) {
-      detalhe = await resposta.text();
-    }
-
-    const erro = new Error(`Falha ao enviar e-mail via Resend (${resposta.status}).`);
+    const erro = new Error(`Falha ao enviar e-mail via ${nomeProvedor} (${resposta.status}).`);
     erro.statusCode = resposta.status;
-    erro.detalhes = detalhe;
+    erro.detalhes = await lerDetalheErro(resposta);
     throw erro;
   }
 

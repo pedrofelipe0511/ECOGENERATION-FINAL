@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const { adminModel } = require("../../models/adminModel");
 
 exports.listar = async (req, res) => {
@@ -11,6 +12,7 @@ exports.listar = async (req, res) => {
 };
 
 exports.deletar = async (req, res) => {
+  if (!validationResult(req).isEmpty()) return res.redirect('/admin/diagnosticos');
   try {
     await adminModel.deleteDiagnostico(req.params.id);
     req.session.flash = { status: 'success', text: 'Diagnóstico removido com sucesso.' };

@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const { adminModel } = require("../../models/adminModel");
 const { comprasModel } = require("../../models/comprasModel");
 
@@ -13,6 +14,7 @@ exports.listar = async (req, res) => {
 };
 
 exports.deletar = async (req, res) => {
+  if (!validationResult(req).isEmpty()) return res.redirect('/admin/usuarios');
   try {
     await adminModel.deleteUsuario(req.params.id);
     req.session.flash = { status: 'success', text: 'Usuário removido com sucesso.' };

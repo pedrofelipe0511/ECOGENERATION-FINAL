@@ -101,7 +101,7 @@ h1.ui.header {
   display: block;
   width: 300px;
   align-self: center;
-  background-color: #4CAF50; /* verde mais vibrante como login */
+  background-color: #2e7d32; /* mesmo verde do login (contraste AA) */
   color: white;
   border-radius: 8px; /* botões arredondados */
 }
