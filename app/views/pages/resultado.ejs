@@ -50,7 +50,6 @@
         iluminacao:   'iluminação dos cômodos',
         carregamento: 'carregamento de celular e internet',
         climatizacao: 'ventilação e climatização',
-        geladeira:    'conservação de alimentos',
         trabalho:     'trabalho e estudo em casa'
       };
       const vulnLabel = vulnerabilidade >= 7 ? 'Alta' : vulnerabilidade >= 3 ? 'Média' : 'Baixa';
@@ -134,9 +133,11 @@
     </section>
 
     <!-- Feedback de salvamento -->
+    <% if (diagnosticoSalvo) { %>
     <section class="diagnostico-salvo" role="status" aria-label="Diagnóstico salvo">
       <p>✓ Seu diagnóstico foi salvo com sucesso no seu perfil.</p>
     </section>
+    <% } %>
 
     <!-- Produtos recomendados -->
     <section class="recomendacoes" aria-labelledby="titulo-recomendacoes">

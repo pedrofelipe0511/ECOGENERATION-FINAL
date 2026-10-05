@@ -8,7 +8,7 @@
   --verde:        #2e7d32;
   --verde-claro:  #e8f5e9;
   --verde-medio:  #4caf50;
-  --azul:         #0e92c2;
+  --azul:         #0a6e94;
   --azul-claro:   #e3f2fd;
   --texto:        #1a1a1a;
   --texto-suave:  #3d4a3d;
@@ -294,7 +294,7 @@ p  { color: var(--texto-suave); }
 }
 
 .como-subtitulo {
-  color: rgba(255,255,255,0.8);
+  color: #e8f5e9;
   font-size: 1rem;
   margin-bottom: 40px;
 }
@@ -308,7 +308,7 @@ p  { color: var(--texto-suave); }
 }
 
 .passo-card {
-  background: rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.15); /* véu escuro: mantém o texto branco legível (AA) */
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: var(--raio);
   padding: 28px 20px;
@@ -320,7 +320,7 @@ p  { color: var(--texto-suave); }
   display: block;
   font-size: 2.2rem;
   font-weight: 800;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.7);
   margin-bottom: 10px;
   line-height: 1;
 }
@@ -332,7 +332,7 @@ p  { color: var(--texto-suave); }
 }
 
 .passo-card p {
-  color: rgba(255,255,255,0.75);
+  color: rgba(255,255,255,0.9);
   font-size: 0.88rem;
 }
 
@@ -1232,4 +1232,10 @@ footer[role="contentinfo"] nav a:focus-visible {
 
 [data-theme="dark"] .mostrar-senha-label {
   color: #9ab09a;
+}
+
+/* O texto do alerta de erro usa a cor do próprio alerta (vermelho-escuro),
+   e não a cor genérica dos parágrafos */
+.erro-geral p {
+  color: inherit;
 }

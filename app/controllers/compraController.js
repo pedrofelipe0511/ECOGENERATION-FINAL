@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const { produtosModel } = require("../models/produtosModel");
 const { comprasModel } = require("../models/comprasModel");
 const { usuariosModel } = require("../models/usuariosModel");
@@ -11,6 +12,10 @@ exports.confirmarCompraForm = async (req, res) => {
             return res.redirect('/ecoloja');
         }
         const produto = resultados[0];
+        if (produto.estoque_produto <= 0) {
+            req.session.flash = { status: 'warning', text: 'Este produto está esgotado no momento.' };
+            return req.session.save(() => res.redirect(`/produto/${produto.id_produto}`));
+        }
         const usuarios = await usuariosModel.findById(req.session.usuarioId);
         const usuario = usuarios[0];
         let endereco = null;
@@ -29,31 +34,30 @@ exports.confirmarCompraForm = async (req, res) => {
 
 // ===== PROCESSAR COMPRA =====
 exports.confirmarCompraSubmit = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        req.session.flash = { status: 'error', text: 'Selecione uma forma de pagamento válida.' };
+        return req.session.save(() => res.redirect(`/confirmar-compra/${req.params.id}`));
+    }
     try {
-        const resultados = await produtosModel.findById(req.params.id);
-        if (!resultados || resultados.length === 0) {
-            return res.redirect('/ecoloja');
+        // Regra de negócio no Model: baixa o estoque e grava a compra numa transação
+        const compra = await comprasModel.createComBaixaEstoque(req.session.usuarioId, req.params.id);
+        if (!compra) {
+            req.session.flash = { status: 'warning', text: 'Este produto esgotou ou não está mais disponível.' };
+            return req.session.save(() => res.redirect('/ecoloja'));
         }
-        const produto = resultados[0];
-
-        const novaCompra = await comprasModel.create({
-            id_usuario: req.session.usuarioId,
-            id_produto: produto.id_produto,
-            nome_produto: produto.nome_produto,
-            preco_produto: produto.preco_produto,
-            imagem_produto: produto.imagem_produto
-        });
 
         // Guarda o id da compra na sessão para exibir na página de sucesso
-        req.session.ultimaCompraId = novaCompra.insertId;
-        req.session.ultimaCompraProduto = produto.nome_produto;
-        req.session.ultimaCompraPreco = produto.preco_produto;
+        req.session.ultimaCompraId = compra.id_compra;
+        req.session.ultimaCompraProduto = compra.nome_produto;
+        req.session.ultimaCompraPreco = compra.preco_produto;
         req.session.flash = { status: 'success', text: 'Compra realizada com sucesso!' };
 
-        res.redirect('/compra-sucesso');
+        req.session.save(() => res.redirect('/compra-sucesso'));
     } catch (erro) {
         console.log(erro);
-        res.redirect('/ecoloja');
+        req.session.flash = { status: 'error', text: 'Não foi possível concluir a compra. Tente novamente.' };
+        req.session.save(() => res.redirect('/ecoloja'));
     }
 };
 

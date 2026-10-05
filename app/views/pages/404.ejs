@@ -10,9 +10,9 @@
 <body>
   <main class="pagina-404" id="conteudo-principal">
     <article class="conteudo-404" aria-labelledby="erro-404-titulo">
-      <h1 id="erro-404-titulo">404</h1>
-      <h2>Produto não encontrado</h2>
-      <p>O produto que você tentou acessar não está disponível no momento.</p>
+      <h1 id="erro-404-titulo"><%= typeof codigo !== 'undefined' ? codigo : 404 %></h1>
+      <h2><%= typeof subtitulo !== 'undefined' ? subtitulo : titulo %></h2>
+      <p><%= typeof mensagem !== 'undefined' ? mensagem : 'O produto que você tentou acessar não está disponível no momento.' %></p>
       <a href="/ecoloja" class="btn-cta">Voltar para a EcoLoja</a>
     </article>
   </main>

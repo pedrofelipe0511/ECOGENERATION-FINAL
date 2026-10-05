@@ -33,6 +33,12 @@ exports.ecoloja = async (req, res) => {
         });
     } catch (erro) {
         console.log(erro);
+        res.status(500).render("ecoloja", {
+            titulo: "EcoLoja",
+            produtos: [],
+            currentPage: 1,
+            totalPages: 0
+        });
     }
 };
 

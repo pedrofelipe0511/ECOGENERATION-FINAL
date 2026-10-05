@@ -1,4 +1,5 @@
 const pool = require("../../config/pool_conexoes");
+const { STATUS_USUARIO } = require("./usuariosModel");
 
 // Model exclusivo para operações administrativas
 const adminModel = {
@@ -10,7 +11,7 @@ const adminModel = {
         "SELECT id_usuario, nome_usuario, email_usuario, status_usuario FROM usuarios ORDER BY id_usuario DESC"
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   getUsuariosRecentes: async () => {
@@ -19,16 +20,16 @@ const adminModel = {
         "SELECT id_usuario, nome_usuario, email_usuario FROM usuarios WHERE status_usuario = 1 ORDER BY id_usuario DESC LIMIT 5"
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   deleteUsuario: async (id) => {
     try {
       const [resultado] = await pool.query(
-        "UPDATE usuarios SET status_usuario = 0 WHERE id_usuario = ?", [id]
+        "UPDATE usuarios SET status_usuario = ? WHERE id_usuario = ?", [STATUS_USUARIO.EXCLUIDO, id]
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   countUsuarios: async () => {
@@ -37,7 +38,7 @@ const adminModel = {
         "SELECT COUNT(*) as total FROM usuarios WHERE status_usuario = 1"
       );
       return resultado[0].total;
-    } catch (erro) { return 0; }
+    } catch (erro) { throw erro; }
   },
 
   // ===== DIAGNÓSTICOS =====
@@ -52,7 +53,7 @@ const adminModel = {
          ORDER BY d.id_diagnostico DESC`
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   getDiagnosticosRecentes: async () => {
@@ -65,7 +66,7 @@ const adminModel = {
          ORDER BY d.id_diagnostico DESC LIMIT 5`
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   deleteDiagnostico: async (id) => {
@@ -74,7 +75,7 @@ const adminModel = {
         "DELETE FROM diagnosticos WHERE id_diagnostico = ?", [id]
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   countDiagnosticos: async () => {
@@ -83,7 +84,7 @@ const adminModel = {
         "SELECT COUNT(*) as total FROM diagnosticos"
       );
       return resultado[0].total;
-    } catch (erro) { return 0; }
+    } catch (erro) { throw erro; }
   },
 
   // ===== PRODUTOS =====
@@ -93,7 +94,7 @@ const adminModel = {
         "SELECT * FROM produtos ORDER BY id_produto DESC"
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   getProduto: async (id) => {
@@ -102,7 +103,7 @@ const adminModel = {
         "SELECT * FROM produtos WHERE id_produto = ?", [id]
       );
       return resultado[0] || null;
-    } catch (erro) { return null; }
+    } catch (erro) { throw erro; }
   },
 
   countProdutos: async () => {
@@ -111,7 +112,7 @@ const adminModel = {
         "SELECT COUNT(*) as total FROM produtos WHERE status_produto = 1"
       );
       return resultado[0].total;
-    } catch (erro) { return 0; }
+    } catch (erro) { throw erro; }
   },
 
   getProdutosBaixoEstoque: async () => {
@@ -120,7 +121,7 @@ const adminModel = {
         "SELECT * FROM produtos WHERE estoque_produto <= 5 AND status_produto = 1"
       );
       return resultado;
-    } catch (erro) { return []; }
+    } catch (erro) { throw erro; }
   },
 
   addProduto: async (dados) => {
@@ -130,7 +131,7 @@ const adminModel = {
         [dados.nome, dados.categoria, dados.preco, dados.descricao, dados.estoque, dados.imagem || 'favicon2.png', dados.rota || null]
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   updateProduto: async (id, dados) => {
@@ -145,7 +146,7 @@ const adminModel = {
       }
       const [resultado] = await pool.query(query, params);
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   },
 
   deleteProduto: async (id) => {
@@ -154,7 +155,7 @@ const adminModel = {
         "UPDATE produtos SET status_produto = 0 WHERE id_produto = ?", [id]
       );
       return resultado;
-    } catch (erro) { return erro; }
+    } catch (erro) { throw erro; }
   }
 
 };

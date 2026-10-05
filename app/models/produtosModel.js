@@ -13,7 +13,7 @@ const produtosModel = {
             const [resultado] = await pool.query(query, params);
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -26,7 +26,7 @@ const produtosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -37,7 +37,7 @@ const produtosModel = {
             );
             return resultado[0].total;
         } catch (erro) {
-            return 0;
+            throw erro;
         }
     },
 
@@ -49,7 +49,7 @@ const produtosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -64,7 +64,30 @@ const produtosModel = {
             const [resultado] = await pool.query(query, params);
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
+        }
+    },
+
+    // Produtos para o resultado do diagnóstico: só itens com estoque, dentro do
+    // orçamento (precoMaximo null = sem teto) e, se informada, da categoria.
+    findRecomendados: async ({ categoria = null, precoMaximo = null, limite = 4 } = {}) => {
+        try {
+            let query = "SELECT * FROM produtos WHERE status_produto = 1 AND estoque_produto > 0";
+            const params = [];
+            if (categoria) {
+                query += " AND categoria_produto = ?";
+                params.push(categoria);
+            }
+            if (precoMaximo !== null) {
+                query += " AND preco_produto <= ?";
+                params.push(precoMaximo);
+            }
+            query += " ORDER BY preco_produto ASC LIMIT ?";
+            params.push(limite);
+            const [resultado] = await pool.query(query, params);
+            return resultado;
+        } catch (erro) {
+            throw erro;
         }
     },
 
@@ -76,7 +99,7 @@ const produtosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -92,7 +115,7 @@ const produtosModel = {
             const [resultado] = await pool.query(query, params);
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -112,7 +135,7 @@ const produtosModel = {
             const [resultado] = await pool.query(query, params);
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     }
 

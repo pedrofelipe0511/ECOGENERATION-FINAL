@@ -1,16 +1,17 @@
 footer.site-footer {
-  background-color: #4CAF50;
+  background-color: #2e7d32;
   color: white;
   padding: 40px 20px 20px;
   margin-top: 40px;
   font-size: 0.95rem;
 }
 
-h1{
+/* Só o título do rodapé é branco (antes era "h1" global e apagava títulos do site) */
+footer.site-footer h1 {
   color: white;
 }
 footer.site-footer a {
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -47,6 +48,7 @@ footer.site-footer a:hover {
 }
 
 .footer-brand p {
+  color: #e8f5e9;
   line-height: 1.7;
   max-width: 420px;
 }
@@ -90,7 +92,7 @@ footer.site-footer a:hover {
 .footer-bottom p {
   margin: 0;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: #e8f5e9;
 }
 
 @media (max-width: 860px) {
@@ -149,7 +151,13 @@ footer.site-footer a:hover {
 [data-theme="dark"] .footer-bottom p {
   color: rgba(224, 224, 224, 0.7);
 }
- 
-p{
+
+/* Texto claro em parágrafos e títulos vale só no modo escuro
+   (antes era "p" e "h1" globais e deixava textos invisíveis no modo claro) */
+:where([data-theme="dark"]) p {
   color: #e0e0e0;
+}
+
+:where([data-theme="dark"]) h1 {
+  color: white;
 }

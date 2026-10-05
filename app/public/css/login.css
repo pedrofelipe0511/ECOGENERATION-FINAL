@@ -122,7 +122,7 @@ main h1 {
 
 /* Botão de login verde */
 .ui.primary.button {
-  background-color: #4CAF50 !important; /* verde */
+  background-color: #2e7d32 !important; /* verde (contraste AA com texto branco) */
   color: white !important;
   margin: none;
   cursor: pointer;
@@ -130,7 +130,7 @@ main h1 {
 
 /* Botão limpar cinza neutro */
 .ui.button[type="reset"] {
-  background-color: #9E9E9E !important; /* cinza neutro */
+  background-color: #616161 !important; /* cinza neutro (contraste AA com texto branco) */
   color: white !important;
   cursor: pointer;
 

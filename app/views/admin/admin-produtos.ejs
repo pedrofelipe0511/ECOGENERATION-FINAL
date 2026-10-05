@@ -76,11 +76,10 @@
                   <a href="/admin/produtos/<%= produto.id_produto %>/editar" class="btn btn-tiny btn-info">
                     ✏️ Editar
                   </a>
-                  <a href="/admin/produtos/<%= produto.id_produto %>/deletar" 
-                     class="btn btn-tiny btn-danger"
-                     onclick="return confirm('Tem certeza que deseja deletar este produto?')">
-                    🗑️ Deletar
-                  </a>
+                  <form method="POST" action="/admin/produtos/<%= produto.id_produto %>/deletar" class="form-inline"
+                        onsubmit="return confirm('Tem certeza que deseja deletar este produto?')">
+                    <button type="submit" class="btn btn-tiny btn-danger">🗑️ Deletar</button>
+                  </form>
                 </td>
               </tr>
             <% }); %>

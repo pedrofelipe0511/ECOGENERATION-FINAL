@@ -1,14 +1,19 @@
 <!-- Flash Message Partial — Exibe notificações via simple-notify.js -->
 <% if (flashMessage && typeof flashMessage === 'object' && flashMessage.status && flashMessage.text) { %>
+  <%
+    // JSON.stringify gera um literal JavaScript válido (aspas, barras e quebras de
+    // linha escapadas); trocar "<" impede que o texto feche a tag <script>.
+    const dadosFlash = JSON.stringify({
+      status: String(flashMessage.status),
+      text: String(flashMessage.text),
+      titulo: flashMessage.titulo ? String(flashMessage.titulo) : '',
+      posicao: flashMessage.posicao ? String(flashMessage.posicao) : 'top-right'
+    }).replace(/</g, '\\u003c');
+  %>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       if (typeof exibirFlashMessage === 'function') {
-        exibirFlashMessage({
-          status: '<%= flashMessage.status %>',
-          text: '<%= flashMessage.text %>',
-          titulo: '<%= flashMessage.titulo || '' %>',
-          posicao: '<%= flashMessage.posicao || 'top-right' %>'
-        });
+        exibirFlashMessage(<%- dadosFlash %>);
       }
     });
   </script>

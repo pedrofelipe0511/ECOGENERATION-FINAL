@@ -12,7 +12,7 @@ router.post('/cadastro',
         check('email').isEmail().withMessage('Email inválido')
             .bail() // só continua para a checagem de DNS se o formato já estiver ok
             .custom(validarEmailReal).withMessage('Este domínio de e-mail não existe ou não recebe mensagens'),
-        check('senha').isLength({ min: 6 }).withMessage('Senha deve ter pelo menos 6 caracteres'),
+        check('senha').isLength({ min: 6, max: 72 }).withMessage('A senha deve ter entre 6 e 72 caracteres'),
         check('cpf').optional({ checkFalsy: true }).custom(validarCPF).withMessage('CPF inválido'),
         check('telefone').optional({ checkFalsy: true }).matches(/^\(\d{2}\)\s?\d{5}-\d{4}$/).withMessage('Telefone inválido. Formato: (XX) XXXXX-XXXX'),
         check('cep').optional({ checkFalsy: true }).matches(/^\d{5}-?\d{3}$/).withMessage('CEP inválido. Formato: 00000-000'),
@@ -36,7 +36,13 @@ router.post('/recuperar-senha',
     authController.recuperarSenhaSubmit
 );
 router.get('/resetar-senha', authController.resetarSenhaForm);
-router.post('/resetar-senha', authController.resetarSenhaSubmit);
+router.post('/resetar-senha',
+    [
+        check('senha').isLength({ min: 6, max: 72 }).withMessage('A senha deve ter entre 6 e 72 caracteres.'),
+        check('confirmarSenha').custom((valor, { req }) => valor === req.body.senha).withMessage('As senhas digitadas não coincidem.'),
+    ],
+    authController.resetarSenhaSubmit
+);
 router.post('/login',
     [
         check('email').isEmail().withMessage('Email inválido'),

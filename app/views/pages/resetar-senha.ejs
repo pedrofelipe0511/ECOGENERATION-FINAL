@@ -24,6 +24,8 @@
 
     <h1>Definir nova senha</h1>
 
+    <p class="auth-description">Crie uma nova senha para a sua conta. Ela deve ter entre 6 e 72 caracteres.</p>
+
     <!-- WCAG 3.3.1 — erros anunciados para leitores de tela -->
     <% if (errors.geral) { %>
       <section role="alert" aria-live="assertive" class="erro-geral">
@@ -31,7 +33,7 @@
       </section>
     <% } %>
 
-    <form action="/resetar-senha" method="post" class="ui form" id="resetar-senha-form" novalidate aria-label="Formulário de redefinição de senha">
+    <form action="/resetar-senha" method="post" class="ui form auth-form" id="resetar-senha-form" novalidate aria-label="Formulário de redefinição de senha">
       <input type="hidden" name="token" value="<%= token %>">
 
       <label for="senha">Nova senha <span aria-hidden="true">*</span></label>
@@ -41,6 +43,7 @@
         name="senha"
         placeholder="Digite a nova senha"
         minlength="6"
+        maxlength="72"
         autocomplete="new-password"
         required
         aria-required="true"
@@ -53,6 +56,7 @@
         name="confirmarSenha"
         placeholder="Digite a nova senha novamente"
         minlength="6"
+        maxlength="72"
         autocomplete="new-password"
         required
         aria-required="true"
@@ -63,6 +67,7 @@
       </label>
 
       <button class="ui primary button" type="submit">Redefinir senha</button>
+      <p><a href="/login">Voltar para o login</a></p>
     </form>
   </main>
 

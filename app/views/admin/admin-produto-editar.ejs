@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="/css/header.css">
   <link rel="stylesheet" href="/css/admin.css">
     <link rel="icon" href="/imagens/favicon2.png" type="image/png">
+  <!-- simple-notify para Flash Messages -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
 </head>
 
 <section class="admin-wrapper">
@@ -113,7 +115,7 @@
                 alt="Imagem atual" 
                 style="max-width: 150px; max-height: 150px; border-radius: 8px; border: 1px solid #ddd; object-fit: cover;"
               >
-              <small style="display:block; color:#888; margin-top:4px;">Imagem atual. Envie uma nova para substituir.</small>
+              <small style="display:block; color:#666; margin-top:4px;">Imagem atual. Envie uma nova para substituir.</small>
             </section>
           <% } %>
           <input 
@@ -123,7 +125,7 @@
             accept="image/*"
             style="padding: 6px 0;"
           >
-          <small style="color:#888;">Formatos aceitos: JPG, PNG, WEBP, GIF</small>
+          <small style="color:#666;">Formatos aceitos: JPG, PNG, WEBP, GIF</small>
         </p>
         
         <footer class="form-actions">
@@ -139,3 +141,9 @@
   </main>
 </section>
 
+<!-- simple-notify JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>
+<!-- Função centralizada de notificações -->
+<script src="/js/notify.js"></script>
+<!-- Flash Message -->
+<%- include('../partials/flash') %>

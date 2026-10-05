@@ -18,7 +18,7 @@ const diagnosticosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
     },
 
@@ -29,7 +29,7 @@ const diagnosticosModel = {
             );
             return resultado;
         } catch (erro) {
-            return erro;
+            throw erro;
         }
         
     },
@@ -42,7 +42,7 @@ const diagnosticosModel = {
         );
         return resultado;
     } catch (erro) {
-        return erro;
+        throw erro;
     }
 }
 }

@@ -1,2 +1,4 @@
 .env
 node_modules/
+# Fotos de perfil enviadas pelos usuários (não versionar)
+app/public/imagens/perfil/
