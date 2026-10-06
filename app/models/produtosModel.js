@@ -68,6 +68,22 @@ const produtosModel = {
         }
     },
 
+    // Produtos que podem entrar no kit do diagnóstico: ativos, com estoque
+    // e com o tipo de energia cadastrado pelo admin
+    findParaKit: async () => {
+        try {
+            const [resultado] = await pool.query(
+                `SELECT id_produto, nome_produto, preco_produto, imagem_produto, tipo_energia, capacidade_energia
+                 FROM produtos
+                 WHERE status_produto = 1 AND estoque_produto > 0 AND tipo_energia IS NOT NULL
+                 ORDER BY preco_produto ASC`
+            );
+            return resultado;
+        } catch (erro) {
+            throw erro;
+        }
+    },
+
     // Produtos para o resultado do diagnóstico: só itens com estoque, dentro do
     // orçamento (precoMaximo null = sem teto) e, se informada, da categoria.
     findRecomendados: async ({ categoria = null, precoMaximo = null, limite = 4 } = {}) => {

@@ -46,12 +46,9 @@
     </section>
 
     <%
-      const labelPrioridade = {
-        iluminacao:   'iluminação dos cômodos',
-        carregamento: 'carregamento de celular e internet',
-        climatizacao: 'ventilação e climatização',
-        trabalho:     'trabalho e estudo em casa'
-      };
+      const brl = (valor) => Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      const linkComprarKit = (kit) => '/confirmar-kit?' + kit.itens.map((p) => 'item=' + p.id_produto).join('&');
+      const marcador = { ok: { simbolo: '✅', texto: 'Coberto' }, parcial: { simbolo: '⚠️', texto: 'Cobre em parte' }, nao: { simbolo: '❌', texto: 'Não coberto' } };
       const vulnLabel = vulnerabilidade >= 7 ? 'Alta' : vulnerabilidade >= 3 ? 'Média' : 'Baixa';
       const prepLabel = preparo >= 7 ? 'Alto'  : preparo >= 3 ? 'Médio' : 'Baixo';
     %>
@@ -63,7 +60,7 @@
         <article class="resultado alta" role="status">
           <section class="resultado-body" aria-label="Resumo do resultado">
             <h2>Parabéns — você já é independente da rede!</h2>
-            <p>Você já conta com uma boa estrutura de proteção energética. Os produtos abaixo são complementos práticos para deixar sua autonomia ainda mais completa.</p>
+            <p>Você já conta com uma boa estrutura de proteção energética. O kit abaixo complementa o que você já tem.</p>
           </section>
         </article>
 
@@ -81,7 +78,7 @@
           <span class="resultado-icon" aria-hidden="true">⚡</span>
           <section class="resultado-body" aria-label="Resumo do resultado">
             <h2>Você está no caminho certo</h2>
-            <p>Você tem alguma proteção, mas ainda é vulnerável em quedas mais longas ou frequentes. Os produtos abaixo vão fechar essa lacuna.</p>
+            <p>Você tem alguma proteção, mas ainda é vulnerável em quedas mais longas ou frequentes. O kit abaixo fecha essa lacuna.</p>
           </section>
         </article>
 
@@ -90,7 +87,7 @@
           <span class="resultado-icon" aria-hidden="true">🌱</span>
           <section class="resultado-body" aria-label="Resumo do resultado">
             <h2>Hora de se preparar antes de precisar</h2>
-            <p>Você raramente enfrenta quedas agora, mas estar preparado custa muito menos do que remediar depois. Veja opções simples e acessíveis.</p>
+            <p>Você raramente enfrenta quedas agora, mas estar preparado custa muito menos do que remediar depois. Veja abaixo um kit simples para começar.</p>
           </section>
         </article>
       <% } %>
@@ -120,15 +117,6 @@
 
       </section>
 
-      <% if (prioridade && labelPrioridade[prioridade]) { %>
-        <p class="resultado-foco">
-          <% if (perfil === 'independente') { %>
-            Com base na sua estrutura atual, selecionamos complementos para <strong><%= labelPrioridade[prioridade] %></strong>.
-          <% } else { %>
-            Sua prioridade é <strong><%= labelPrioridade[prioridade] %></strong> — os produtos abaixo foram selecionados com isso em mente.
-          <% } %>
-        </p>
-      <% } %>
 
     </section>
 
@@ -139,30 +127,66 @@
     </section>
     <% } %>
 
-    <!-- Produtos recomendados -->
-    <section class="recomendacoes" aria-labelledby="titulo-recomendacoes">
-      <h2 id="titulo-recomendacoes">Produtos selecionados para o seu perfil</h2>
+    <!-- Kit recomendado -->
+    <section class="plano" aria-labelledby="titulo-plano">
+      <h2 id="titulo-plano">Seu kit para quando a luz cair</h2>
 
-      <% if (!produtosRecomendados || produtosRecomendados.length === 0) { %>
-        <p class="sem-produtos">
-          Nenhum produto encontrado.
-          <a href="/ecoloja">Acesse a EcoLoja</a> para ver todos os produtos.
-        </p>
+      <% if (plano.kit) { %>
+        <article class="kit">
+          <header class="kit-cabecalho">
+            <p class="kit-total"><%= brl(plano.kit.total) %></p>
+            <p class="kit-orcamento"><%= plano.teto ? 'dentro do seu orçamento' : 'o melhor kit para o que você precisa' %></p>
+          </header>
+
+          <ul class="kit-itens">
+            <% plano.kit.itens.forEach(function(produto) { %>
+              <li class="kit-item">
+                <img src="/imagens/<%= produto.imagem_produto %>" alt="" loading="lazy">
+                <section class="kit-item-info" aria-label="<%= produto.nome_produto %>">
+                  <h3><%= produto.nome_produto %></h3>
+                  <p><%= brl(produto.preco_produto) %></p>
+                </section>
+                <a href="/produto/<%= produto.id_produto %>" class="kit-item-link" aria-label="Ver <%= produto.nome_produto %>">Ver produto</a>
+              </li>
+            <% }); %>
+          </ul>
+
+          <h3 class="kit-subtitulo">Com ele você mantém:</h3>
+          <ul class="kit-cobertura">
+            <% plano.kit.cobertura.forEach(function(item) { %>
+              <li class="cobertura <%= item.status %>">
+                <span class="cobertura-status" aria-hidden="true"><%= marcador[item.status].simbolo %></span>
+                <span class="visually-hidden"><%= marcador[item.status].texto %>:</span>
+                <span class="cobertura-texto"><span aria-hidden="true"><%= item.icone %></span> <strong><%= item.nome %></strong>: <%= item.frase %></span>
+              </li>
+            <% }); %>
+          </ul>
+
+          <a href="<%= linkComprarKit(plano.kit) %>" class="btn-comprar-kit">Comprar kit por <%= brl(plano.kit.total) %></a>
+        </article>
       <% } else { %>
-        <ul class="produtos-grid-home">
-          <% produtosRecomendados.forEach(function(produto) { %>
-            <li class="produto-card-home">
-              <figure>
-                <img src="/imagens/<%= produto.imagem_produto %>" alt="<%= produto.nome_produto %>">
-              </figure>
-              <h3><%= produto.nome_produto %></h3>
-              <p class="produto-preco-home">R$ <%= produto.preco_produto %></p>
-              <a href="/produto/<%= produto.id_produto %>" class="btn-ver">Ver produto</a>
-            </li>
-          <% }); %>
-        </ul>
+        <p class="kit-vazio">
+          Não encontramos um kit <%= plano.teto ? 'de até ' + brl(plano.teto) : '' %> que mantenha esses aparelhos funcionando.
+          <% if (!plano.alternativa) { %><a href="/ecoloja">Veja todos os produtos na EcoLoja</a>.<% } %>
+        </p>
       <% } %>
 
+      <% if (plano.alternativa) { %>
+        <aside class="kit-alternativa" aria-labelledby="titulo-alternativa">
+          <h3 id="titulo-alternativa">Para manter tudo funcionando</h3>
+          <p>
+            Este kit de <strong><%= brl(plano.alternativa.total) %></strong> cobre todos os aparelhos que você escolheu<%= plano.teto ? ', mas passa do seu orçamento' : '' %>:
+          </p>
+          <ul class="kit-alternativa-itens">
+            <% plano.alternativa.itens.forEach(function(produto) { %>
+              <li><a href="/produto/<%= produto.id_produto %>"><%= produto.nome_produto %></a> — <%= brl(produto.preco_produto) %></li>
+            <% }); %>
+          </ul>
+          <a href="<%= linkComprarKit(plano.alternativa) %>" class="btn-comprar-alternativa">Comprar este kit</a>
+        </aside>
+      <% } %>
+
+      <p class="kit-aviso">Estimativa feita com o consumo médio de cada aparelho. O tempo real pode variar conforme o modelo e o uso.</p>
     </section>
 
     <!-- Ações pós-resultado -->

@@ -5,6 +5,15 @@ const { removerArquivo } = require('../../helpers/imagens');
 
 const pastaImagens = path.join(__dirname, '../../public/imagens');
 
+// Tipo de energia e capacidade usados pelo kit do diagnóstico.
+// Painel e "não entra no kit" não usam capacidade.
+const TIPOS_COM_CAPACIDADE = ['bateria', 'bateria_usb', 'luz', 'ventilador'];
+const dadosEnergia = (body) => {
+  const tipoEnergia = body.tipo_energia || null;
+  const capacidadeEnergia = TIPOS_COM_CAPACIDADE.includes(tipoEnergia) ? Number(body.capacidade_energia) : null;
+  return { tipoEnergia, capacidadeEnergia };
+};
+
 // Só apaga imagens enviadas pelo painel (produto_*); as imagens originais do
 // projeto podem ser usadas em outras páginas e nunca são removidas.
 const removerImagemProduto = (nomeArquivo) => {
@@ -44,7 +53,7 @@ exports.criar = async (req, res) => {
   try {
     const { nome, categoria, preco, descricao, estoque } = req.body;
     const imagem = req.file ? req.file.filename : null;
-    await adminModel.addProduto({ nome, categoria, preco, descricao, estoque, imagem });
+    await adminModel.addProduto({ nome, categoria, preco, descricao, estoque, imagem, ...dadosEnergia(req.body) });
     req.session.flash = { status: 'success', text: `Produto "${nome}" criado com sucesso!` };
     res.redirect('/admin/produtos');
   } catch (erro) {
@@ -77,7 +86,7 @@ exports.atualizar = async (req, res) => {
       if (req.file) removerArquivo(req.file.path);
       return res.redirect('/admin/produtos');
     }
-    await adminModel.updateProduto(req.params.id, { nome, categoria, preco, descricao, estoque, imagem });
+    await adminModel.updateProduto(req.params.id, { nome, categoria, preco, descricao, estoque, imagem, ...dadosEnergia(req.body) });
     if (imagem && anterior.imagem_produto !== imagem) removerImagemProduto(anterior.imagem_produto);
     req.session.flash = { status: 'success', text: `Produto "${nome}" atualizado com sucesso!` };
     res.redirect('/admin/produtos');

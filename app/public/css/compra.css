@@ -438,3 +438,16 @@
 [data-theme="dark"] .btn-voltar:hover {
   background: #666;
 }
+
+/* Lista de produtos na confirmação do kit do diagnóstico */
+.kit-compra-lista {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.kit-compra-lista .kit-compra-item {
+  margin: 0;
+}

@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const { produtosModel } = require("../models/produtosModel");
 const { diagnosticosModel } = require("../models/diagnosticosModel");
-const { calcularDiagnostico } = require("../models/diagnosticoRegras");
+const { calcularDiagnostico, montarKit } = require("../models/diagnosticoRegras");
 
 // ===== TELA DO DIAGNÓSTICO =====
 exports.form = (req, res) => {
@@ -16,7 +16,7 @@ exports.calcular = async (req, res) => {
         return req.session.save(() => res.redirect('/diagnostico'));
     }
 
-    const { frequencia, duracao, prioridade, moradia } = req.body;
+    const { frequencia, duracao, moradia, orcamento, aparelhos } = req.body;
     const resultado = calcularDiagnostico(req.body);
 
     // ── SALVAR ───────────────────────────────────────────────
@@ -27,7 +27,7 @@ exports.calcular = async (req, res) => {
             frequencia,
             impacto:         duracao,
             preparacao:      resultado.preparacoes.join(', '),
-            prioridade,
+            prioridade:      aparelhos.join(', '), // aparelhos que a pessoa quer manter ligados
             tolerancia:      moradia,
             nivel_autonomia: resultado.perfil
         });
@@ -36,20 +36,13 @@ exports.calcular = async (req, res) => {
         diagnosticoSalvo = false;
     }
 
-    // ── PRODUTOS ─────────────────────────────────────────────
-    // Primeiro a categoria ideal dentro do orçamento; se não houver nenhum
-    // produto nela, qualquer categoria — mas sempre respeitando o orçamento.
-    let produtosRecomendados = [];
+    // ── KIT RECOMENDADO ──────────────────────────────────────
+    let plano = { kit: null, alternativa: null, teto: null, aparelhos };
     try {
-        produtosRecomendados = await produtosModel.findRecomendados({
-            categoria: resultado.categoria,
-            precoMaximo: resultado.precoMaximo
-        });
-        if (produtosRecomendados.length === 0) {
-            produtosRecomendados = await produtosModel.findRecomendados({ precoMaximo: resultado.precoMaximo });
-        }
+        const produtos = await produtosModel.findParaKit();
+        plano = montarKit({ aparelhos, duracao, orcamento }, produtos);
     } catch (erro) {
-        console.log('Erro ao buscar produtos recomendados:', erro);
+        console.log('Erro ao montar o kit:', erro);
     }
 
     const nivelParaView = resultado.perfil === 'independente' ? 'alta'
@@ -59,10 +52,9 @@ exports.calcular = async (req, res) => {
     res.render('resultado', {
         nivel: nivelParaView,
         perfil: resultado.perfil,
-        produtosRecomendados,
-        prioridade,
         vulnerabilidade: resultado.vulnerabilidade,
         preparo: resultado.preparo,
+        plano,
         diagnosticoSalvo
     });
 };

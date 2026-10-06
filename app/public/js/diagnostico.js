@@ -4,14 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   diagnosticoForm.addEventListener('submit', function(e) {
     // Campos obrigatórios (radio) — nomes atuais do formulário
-    const camposRadio = ['frequencia', 'duracao', 'prioridade', 'moradia', 'orcamento'];
+    const camposRadio = ['frequencia', 'duracao', 'moradia', 'orcamento'];
     const naoRespondidas = camposRadio.filter(campo =>
       !document.querySelector(`input[name="${campo}"]:checked`)
     );
 
-    // Pergunta 3 é checkbox — basta ter pelo menos 1 marcado
-    const preparacaoMarcada = document.querySelectorAll('input[name="preparacao"]:checked').length > 0;
-    if (!preparacaoMarcada) naoRespondidas.push('preparacao');
+    // Perguntas 3 e 4 são checkbox — basta ter pelo menos 1 marcado em cada
+    ['preparacao', 'aparelhos'].forEach(campo => {
+      if (!document.querySelector(`input[name="${campo}"]:checked`)) naoRespondidas.push(campo);
+    });
 
     const feedback = document.getElementById('form-feedback');
 

@@ -3,41 +3,52 @@ const pool = require("../../config/pool_conexoes");
 const comprasModel = {
 
     // Regra de negócio: só vende se houver estoque. A baixa do estoque e o
-    // registro da compra acontecem numa TRANSAÇÃO — ou os dois são gravados,
-    // ou nenhum. Retorna null quando o produto está esgotado ou indisponível.
-    createComBaixaEstoque: async (id_usuario, id_produto) => {
+    // registro das compras acontecem numa TRANSAÇÃO — ou todos os itens são
+    // gravados, ou nenhum. Usado para um produto avulso e para o kit do
+    // diagnóstico. Retorna null se algum item estiver esgotado ou indisponível.
+    createKitComBaixaEstoque: async (id_usuario, idsProdutos) => {
         const conexao = await pool.getConnection();
         try {
             await conexao.beginTransaction();
+            const compras = [];
 
-            // O "estoque_produto > 0" no WHERE impede vender a mesma última
-            // unidade para duas pessoas ao mesmo tempo.
-            const [baixa] = await conexao.query(
-                "UPDATE produtos SET estoque_produto = estoque_produto - 1 WHERE id_produto = ? AND status_produto = 1 AND estoque_produto > 0",
-                [id_produto]
-            );
-            if (baixa.affectedRows === 0) {
-                await conexao.rollback();
-                return null;
+            for (const id_produto of idsProdutos) {
+                // O "estoque_produto > 0" no WHERE impede vender a mesma última
+                // unidade para duas pessoas ao mesmo tempo.
+                const [baixa] = await conexao.query(
+                    "UPDATE produtos SET estoque_produto = estoque_produto - 1 WHERE id_produto = ? AND status_produto = 1 AND estoque_produto > 0",
+                    [id_produto]
+                );
+                if (baixa.affectedRows === 0) {
+                    await conexao.rollback();
+                    return null;
+                }
+
+                const [[produto]] = await conexao.query(
+                    "SELECT nome_produto, preco_produto, imagem_produto FROM produtos WHERE id_produto = ?",
+                    [id_produto]
+                );
+                const [resultado] = await conexao.query(
+                    "INSERT INTO compras (id_usuario, id_produto, nome_produto, preco_produto, imagem_produto, status_compra) VALUES (?, ?, ?, ?, ?, ?)",
+                    [id_usuario, id_produto, produto.nome_produto, produto.preco_produto, produto.imagem_produto, 'confirmado']
+                );
+                compras.push({ id_compra: resultado.insertId, ...produto });
             }
 
-            const [[produto]] = await conexao.query(
-                "SELECT nome_produto, preco_produto, imagem_produto FROM produtos WHERE id_produto = ?",
-                [id_produto]
-            );
-            const [resultado] = await conexao.query(
-                "INSERT INTO compras (id_usuario, id_produto, nome_produto, preco_produto, imagem_produto, status_compra) VALUES (?, ?, ?, ?, ?, ?)",
-                [id_usuario, id_produto, produto.nome_produto, produto.preco_produto, produto.imagem_produto, 'confirmado']
-            );
-
             await conexao.commit();
-            return { id_compra: resultado.insertId, ...produto };
+            return compras;
         } catch (erro) {
             await conexao.rollback();
             throw erro;
         } finally {
             conexao.release();
         }
+    },
+
+    // Compra de um produto avulso (mesma regra, com um item só)
+    createComBaixaEstoque: async (id_usuario, id_produto) => {
+        const compras = await comprasModel.createKitComBaixaEstoque(id_usuario, [id_produto]);
+        return compras ? compras[0] : null;
     },
 
     // Buscar todas as compras de um usuário

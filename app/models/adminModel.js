@@ -127,8 +127,8 @@ const adminModel = {
   addProduto: async (dados) => {
     try {
       const [resultado] = await pool.query(
-        "INSERT INTO produtos (nome_produto, categoria_produto, preco_produto, descricao_produto, estoque_produto, imagem_produto, rota_produto) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [dados.nome, dados.categoria, dados.preco, dados.descricao, dados.estoque, dados.imagem || 'favicon2.png', dados.rota || null]
+        "INSERT INTO produtos (nome_produto, categoria_produto, preco_produto, descricao_produto, estoque_produto, imagem_produto, rota_produto, tipo_energia, capacidade_energia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [dados.nome, dados.categoria, dados.preco, dados.descricao, dados.estoque, dados.imagem || 'favicon2.png', dados.rota || null, dados.tipoEnergia, dados.capacidadeEnergia]
       );
       return resultado;
     } catch (erro) { throw erro; }
@@ -136,14 +136,14 @@ const adminModel = {
 
   updateProduto: async (id, dados) => {
     try {
-      let query, params;
+      const campos = ["nome_produto = ?", "categoria_produto = ?", "preco_produto = ?", "descricao_produto = ?", "estoque_produto = ?", "tipo_energia = ?", "capacidade_energia = ?"];
+      const params = [dados.nome, dados.categoria, dados.preco, dados.descricao, dados.estoque, dados.tipoEnergia, dados.capacidadeEnergia];
       if (dados.imagem) {
-        query = "UPDATE produtos SET nome_produto = ?, categoria_produto = ?, preco_produto = ?, descricao_produto = ?, estoque_produto = ?, imagem_produto = ? WHERE id_produto = ?";
-        params = [dados.nome, dados.categoria, dados.preco, dados.descricao, dados.estoque, dados.imagem, id];
-      } else {
-        query = "UPDATE produtos SET nome_produto = ?, categoria_produto = ?, preco_produto = ?, descricao_produto = ?, estoque_produto = ? WHERE id_produto = ?";
-        params = [dados.nome, dados.categoria, dados.preco, dados.descricao, dados.estoque, id];
+        campos.push("imagem_produto = ?");
+        params.push(dados.imagem);
       }
+      params.push(id);
+      const query = `UPDATE produtos SET ${campos.join(', ')} WHERE id_produto = ?`;
       const [resultado] = await pool.query(query, params);
       return resultado;
     } catch (erro) { throw erro; }
