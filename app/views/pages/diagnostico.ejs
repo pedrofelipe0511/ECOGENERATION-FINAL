@@ -74,14 +74,17 @@
         <label class="checkbox-option"><input type="checkbox" name="preparacao" value="nenhuma"> Nada, fico sem energia mesmo</label>
       </fieldset>
 
-     <!-- PERGUNTA 4 -->
-<fieldset class="pergunta" id="q4">
-  <legend>4. Quando falta energia, o que você mais precisa manter funcionando?</legend>
-  <label><input type="radio" name="prioridade" value="iluminacao" required> Iluminação dos cômodos</label>
-  <label><input type="radio" name="prioridade" value="carregamento"> Celular e internet</label>
-  <label><input type="radio" name="prioridade" value="climatizacao"> Ventilador ou ar-condicionado</label>
-  <label><input type="radio" name="prioridade" value="trabalho"> Computador / trabalho em casa</label>
-</fieldset>
+      <!-- PERGUNTA 4 -->
+      <fieldset class="pergunta" id="q4">
+        <legend>4. O que você quer manter funcionando quando a luz cair?</legend>
+        <p class="checkbox-hint">Pode marcar mais de uma opção.</p>
+        <label class="checkbox-option"><input type="checkbox" name="aparelhos" value="celular"> <span aria-hidden="true">📱</span> Celular</label>
+        <label class="checkbox-option"><input type="checkbox" name="aparelhos" value="luz"> <span aria-hidden="true">💡</span> Luz de um cômodo</label>
+        <label class="checkbox-option"><input type="checkbox" name="aparelhos" value="ventilador"> <span aria-hidden="true">🌀</span> Ventilador</label>
+        <label class="checkbox-option"><input type="checkbox" name="aparelhos" value="wifi"> <span aria-hidden="true">📶</span> Wi-Fi (internet)</label>
+        <label class="checkbox-option"><input type="checkbox" name="aparelhos" value="notebook"> <span aria-hidden="true">💻</span> Notebook</label>
+      </fieldset>
+
       <!-- PERGUNTA 5 -->
       <fieldset class="pergunta" id="q5">
         <legend>5. Qual é a sua situação de moradia?</legend>
@@ -125,8 +128,9 @@
         form.querySelectorAll('input[type="radio"]:checked').forEach(function(r) {
           respondidas.add(r.name);
         });
-        var checkboxMarcado = form.querySelectorAll('input[type="checkbox"]:checked').length > 0;
-        if (checkboxMarcado) respondidas.add('preparacao');
+        ['preparacao', 'aparelhos'].forEach(function(nome) {
+          if (form.querySelector('input[name="' + nome + '"]:checked')) respondidas.add(nome);
+        });
         var n = respondidas.size;
         fill.style.width = Math.round((n / total) * 100) + '%';
         texto.textContent = n + ' de ' + total + ' respondidas';

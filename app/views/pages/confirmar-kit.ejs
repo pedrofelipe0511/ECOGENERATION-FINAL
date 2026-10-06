@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="confirmar compra, checkout, loja online, produtos solares, pagamento">
+  <meta name="description" content="Confirme sua compra de produtos solares portáteis na EcoGeneration.">
+  <title>Confirmar Kit — EcoGeneration</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/compra.css">
+  <link rel="icon" href="/imagens/favicon2.png" type="image/png">
+
+  <!-- Open Graph (OG) — cartão de visitas nas redes sociais -->
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Confirmar Kit — EcoGeneration">
+  <meta property="og:description" content="Confirme seu pedido e finalize sua compra com segurança.">
+  <meta property="og:url" content="https://ecogeneration-final-4hh3.onrender.com">
+  <meta property="og:site_name" content="EcoGeneration">
+  <meta property="og:image" content="https://ecogeneration-final-4hh3.onrender.com/imagens/og-cover-v2.png">
+  <meta property="og:image:secure_url" content="https://ecogeneration-final-4hh3.onrender.com/imagens/og-cover-v2.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="EcoGeneration — Autonomia Energética">
+  <!-- Twitter/X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Confirmar Kit — EcoGeneration">
+  <meta name="twitter:description" content="Confirme seu pedido e finalize sua compra com segurança.">
+  <meta name="twitter:image" content="https://ecogeneration-final-4hh3.onrender.com/imagens/og-cover-v2.png">
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2e7d32">
+  <!-- simple-notify para Flash Messages -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <% const brl = (valor) => Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); %>
+
+  <main class="compra-container" id="conteudo-principal">
+
+    <section class="compra-header">
+      <h1>Confirmar Kit</h1>
+      <p>Os <%= produtos.length %> produtos recomendados pelo seu diagnóstico, comprados juntos</p>
+    </section>
+
+    <ul class="kit-compra-lista" aria-label="Produtos do kit">
+      <% produtos.forEach(function(produto) { %>
+        <li class="compra-card kit-compra-item">
+          <figure class="compra-produto-img">
+            <img src="/imagens/<%= produto.imagem_produto %>" alt="<%= produto.nome_produto %>">
+          </figure>
+          <section class="compra-produto-info" aria-label="Informações do produto">
+            <h2><%= produto.nome_produto %></h2>
+            <p class="compra-preco"><%= brl(produto.preco_produto) %></p>
+          </section>
+        </li>
+      <% }); %>
+    </ul>
+
+    <section class="compra-secao" aria-labelledby="endereco-titulo">
+      <header class="compra-secao-cabecalho">
+        <h2 id="endereco-titulo">Endereço de entrega</h2>
+        <a href="/perfil" class="compra-link">Editar endereço</a>
+      </header>
+      <address class="endereco-entrega">
+        <strong><%= usuario.nome_usuario %></strong>
+        <% if (usuario.telefone_usuario) { %><span><%= usuario.telefone_usuario %></span><% } %>
+        <% if (usuario.cep_usuario) { %><span>CEP: <%= usuario.cep_usuario %></span><% } %>
+        <% if (endereco) { %>
+          <span><%= endereco.logradouro %><%= usuario.numero_usuario ? ', ' + usuario.numero_usuario : '' %></span>
+          <span><%= endereco.bairro %> - <%= endereco.localidade %>/<%= endereco.uf %></span>
+        <% } else if (usuario.numero_usuario || usuario.complemento_usuario) { %>
+          <% if (usuario.numero_usuario) { %><span>Número: <%= usuario.numero_usuario %></span><% } %>
+          <% if (usuario.complemento_usuario) { %><span><%= usuario.complemento_usuario %></span><% } %>
+        <% } else { %>
+          <span class="endereco-pendente">Complete seu endereço no perfil.</span>
+        <% } %>
+        <% if (usuario.complemento_usuario && endereco) { %><span><%= usuario.complemento_usuario %></span><% } %>
+        <% if (erroCep) { %><span class="endereco-pendente">Endereço não pôde ser consultado agora.</span><% } %>
+      </address>
+    </section>
+
+    <section class="compra-secao" aria-labelledby="pagamento-titulo">
+      <h2 id="pagamento-titulo">Forma de pagamento</h2>
+      <fieldset class="pagamento-opcoes">
+        <legend>Selecione uma opção</legend>
+        <label><input type="radio" name="forma_pagamento" value="pix" form="confirmar-kit-form" checked> PIX</label>
+        <label><input type="radio" name="forma_pagamento" value="credito" form="confirmar-kit-form"> Cartão de crédito</label>
+        <label><input type="radio" name="forma_pagamento" value="debito" form="confirmar-kit-form"> Cartão de débito</label>
+      </fieldset>
+      <p class="compra-aviso">O pagamento será processado de forma segura na próxima etapa. A integração de pagamento ainda será disponibilizada.</p>
+    </section>
+
+    <section class="compra-resumo" aria-label="Resumo do pedido">
+      <h3>Resumo do pedido</h3>
+      <ul>
+        <% produtos.forEach(function(produto) { %>
+          <li>
+            <span><%= produto.nome_produto %> (1 unidade)</span>
+            <strong><%= brl(produto.preco_produto) %></strong>
+          </li>
+        <% }); %>
+        <li>
+          <span>Frete</span>
+          <strong>A definir</strong>
+        </li>
+        <li class="compra-total">
+          <span>Total</span>
+          <strong class="compra-preco-total"><%= brl(total) %></strong>
+        </li>
+      </ul>
+    </section>
+
+    <nav class="compra-acoes" aria-label="Ações da compra">
+      <form id="confirmar-kit-form" action="/confirmar-kit" method="POST">
+        <% produtos.forEach(function(produto) { %>
+          <input type="hidden" name="item" value="<%= produto.id_produto %>">
+        <% }); %>
+        <button type="submit" class="btn-confirmar">Comprar kit</button>
+      </form>
+      <a href="/diagnostico" class="btn-voltar" onclick="if (history.length > 1) { history.back(); return false; }">Voltar ao resultado</a>
+    </nav>
+
+  </main>
+
+  <%- include('../partials/footer') %>
+  <!-- simple-notify JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>
+  <!-- Função centralizada de notificações -->
+  <script src="/js/notify.js"></script>
+  <!-- Flash Message -->
+  <%- include('../partials/flash') %>
+</body>
+</html>

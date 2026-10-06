@@ -732,3 +732,24 @@
 .form-inline {
   display: inline;
 }
+
+/* Bloco "Kit do diagnóstico" no formulário de produto */
+.form-energia {
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 0 0 20px;
+}
+
+.form-energia legend {
+  font-weight: 700;
+  padding: 0 6px;
+  color: #1b5e20;
+}
+
+.dica-energia {
+  display: block;
+  color: #555;
+  font-size: 13px;
+  line-height: 1.5;
+}

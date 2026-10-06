@@ -95,6 +95,40 @@
           >
         </p>
         
+        <%
+          const tipoAtual = isNovo ? '' : (produto.tipo_energia || '');
+          const tiposEnergia = [
+            ['', 'Não entra no kit do diagnóstico'],
+            ['bateria', 'Bateria com tomada (estação de energia, gerador)'],
+            ['bateria_usb', 'Bateria só com USB (power bank, carregador)'],
+            ['luz', 'Lâmpada ou luminária com bateria própria'],
+            ['ventilador', 'Ventilador com bateria própria'],
+            ['painel', 'Painel solar (só gera, não guarda energia)']
+          ];
+        %>
+        <fieldset class="form-group form-energia">
+          <legend>Kit do diagnóstico</legend>
+          <p class="form-group">
+            <label for="tipo_energia">Tipo de energia</label>
+            <select id="tipo_energia" name="tipo_energia" aria-describedby="dica-energia">
+              <% tiposEnergia.forEach(([valor, texto]) => { %>
+                <option value="<%= valor %>" <%= tipoAtual === valor ? 'selected' : '' %>><%= texto %></option>
+              <% }) %>
+            </select>
+          </p>
+          <p class="form-group">
+            <label for="capacidade_energia" id="rotulo-capacidade">Capacidade</label>
+            <input type="number" id="capacidade_energia" name="capacidade_energia" step="0.1" min="0"
+                   value="<%= isNovo || produto.capacidade_energia == null ? '' : Number(produto.capacidade_energia) %>"
+                   aria-describedby="dica-energia">
+          </p>
+          <small id="dica-energia" class="dica-energia">
+            Baterias: informe a capacidade em Wh, que vem na caixa (ex.: 288). Se só houver mAh, multiplique por 3,7 e divida por 1000.
+            Lâmpadas e ventiladores: informe quantas horas funcionam com a bateria cheia. Painéis: deixe em branco.
+            O cliente nunca vê esse número: o diagnóstico mostra só frases como "a noite toda".
+          </small>
+        </fieldset>
+
         <p class="form-group">
           <label for="descricao">Descrição Detalhada *</label>
           <textarea 
@@ -103,7 +137,7 @@
             rows="6"
             placeholder="Descreva os detalhes do produto, especificações, benefícios, etc."
             required
-          ><%= isNovo ? '' : produto.descricao %></textarea>
+          ><%= isNovo ? '' : produto.descricao_produto %></textarea>
         </p>
         
         <p class="form-group">
@@ -140,6 +174,31 @@
     </section>
   </main>
 </section>
+
+<script>
+  // Ajusta o rótulo da capacidade conforme o tipo de energia escolhido
+  (function () {
+    var tipo = document.getElementById('tipo_energia');
+    var campo = document.getElementById('capacidade_energia');
+    var rotulo = document.getElementById('rotulo-capacidade');
+    if (!tipo || !campo || !rotulo) return;
+    var rotulos = {
+      bateria: 'Capacidade da bateria (Wh)',
+      bateria_usb: 'Capacidade da bateria (Wh)',
+      luz: 'Autonomia (horas)',
+      ventilador: 'Autonomia (horas)'
+    };
+    function atualizar() {
+      var usaCapacidade = Object.prototype.hasOwnProperty.call(rotulos, tipo.value);
+      rotulo.textContent = usaCapacidade ? rotulos[tipo.value] + ' *' : 'Capacidade (não se aplica)';
+      campo.disabled = !usaCapacidade;
+      campo.required = usaCapacidade;
+      if (!usaCapacidade) campo.value = '';
+    }
+    tipo.addEventListener('change', atualizar);
+    atualizar();
+  })();
+</script>
 
 <!-- simple-notify JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>

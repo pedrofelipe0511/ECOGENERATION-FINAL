@@ -25,6 +25,13 @@ const regrasProduto = [
   check('descricao').trim().optional({ checkFalsy: true })
     .isLength({ max: 255 }).withMessage('A descrição deve ter no máximo 255 caracteres.'),
   check('estoque').isInt({ min: 0 }).withMessage('O estoque deve ser um número inteiro a partir de 0.').toInt(),
+  check('tipo_energia').optional({ checkFalsy: true })
+    .isIn(['bateria', 'bateria_usb', 'luz', 'ventilador', 'painel']).withMessage('Tipo de energia inválido.'),
+  check('capacidade_energia').custom((valor, { req }) => {
+    if (!['bateria', 'bateria_usb', 'luz', 'ventilador'].includes(req.body.tipo_energia)) return true;
+    const numero = Number(valor);
+    return valor !== '' && valor !== undefined && Number.isFinite(numero) && numero > 0 && numero <= 99999;
+  }).withMessage('Informe a capacidade (Wh para baterias, horas para lâmpadas e ventiladores).'),
 ];
 
 const regraId = check('id').isInt({ min: 1 });
