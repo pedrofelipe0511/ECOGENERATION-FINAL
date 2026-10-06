@@ -53,6 +53,31 @@ const comprasModel = {
         }
     },
 
+    // Uma página das compras do usuário (mais recentes primeiro)
+    findByUsuarioPaginado: async (id_usuario, limite, offset) => {
+        try {
+            const [resultado] = await pool.query(
+                "SELECT * FROM compras WHERE id_usuario = ? ORDER BY id_compra DESC LIMIT ? OFFSET ?",
+                [id_usuario, limite, offset]
+            );
+            return resultado;
+        } catch (erro) {
+            throw erro;
+        }
+    },
+
+    countByUsuario: async (id_usuario) => {
+        try {
+            const [resultado] = await pool.query(
+                "SELECT COUNT(*) AS total FROM compras WHERE id_usuario = ?",
+                [id_usuario]
+            );
+            return resultado[0].total;
+        } catch (erro) {
+            throw erro;
+        }
+    },
+
     // Buscar uma compra específica pelo ID
     findById: async (id) => {
         try {

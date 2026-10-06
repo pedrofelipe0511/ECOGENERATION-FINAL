@@ -428,3 +428,125 @@
 [data-theme="dark"] .btn-cancelar:hover {
   background: #666;
 }
+
+/* ── PAGINAÇÃO DO HISTÓRICO (compras e diagnósticos) ───────── */
+#minhas-compras,
+#meus-diagnosticos {
+  scroll-margin-top: 16px; /* ao trocar de página, a seção não fica colada no topo */
+}
+
+.perfil-paginacao {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.perfil-paginacao-resumo {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.perfil-paginacao-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.perfil-pagina {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  padding: 0 0.75rem;
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1b5e20;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+a.perfil-pagina:hover,
+a.perfil-pagina:focus-visible {
+  background: #e8f5e9;
+  border-color: #2e7d32;
+}
+
+.perfil-pagina.ativa {
+  background: #2e7d32;
+  border-color: #2e7d32;
+  color: #ffffff;
+}
+
+.perfil-pagina.desabilitada {
+  color: #6b7280;
+  border-color: #e5e7eb;
+  background: #f9fafb;
+  cursor: default;
+}
+
+.perfil-pagina-reticencias {
+  padding: 0 0.25rem;
+  color: #4b5563;
+}
+
+[data-theme="dark"] .perfil-paginacao-resumo,
+[data-theme="dark"] .perfil-pagina-reticencias {
+  color: #c4c4c4;
+}
+
+[data-theme="dark"] .perfil-pagina {
+  background: #1f1f1f;
+  border-color: #3d5a3e;
+  color: #7fcf80;
+}
+
+[data-theme="dark"] a.perfil-pagina:hover,
+[data-theme="dark"] a.perfil-pagina:focus-visible {
+  background: #263826;
+  border-color: #7fcf80;
+}
+
+[data-theme="dark"] .perfil-pagina.ativa {
+  background: #2e7d32;
+  border-color: #2e7d32;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .perfil-pagina.desabilitada {
+  background: #242424;
+  border-color: #333;
+  color: #9a9a9a;
+}
+
+/* Em telas estreitas, só as setas — a paginação cabe numa linha */
+@media (max-width: 480px) {
+  .perfil-pagina-texto {
+    display: none;
+  }
+
+  .perfil-paginacao-lista {
+    gap: 0.25rem;
+  }
+
+  .perfil-pagina {
+    min-width: 2rem;
+    height: 2.2rem;
+    padding: 0 0.4rem;
+  }
+
+  .perfil-pagina-reticencias {
+    padding: 0;
+  }
+}
