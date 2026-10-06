@@ -17,21 +17,38 @@ const consultarCep = async (cep) => {
     return dados.erro ? null : dados;
 };
 
+// Histórico no perfil: quantos itens por página em cada lista
+const ITENS_POR_PAGINA = 3;
+
+// Busca uma página de uma lista do usuário. A página pedida na URL é
+// ajustada para ficar entre 1 e a última página existente.
+const paginar = async (model, idUsuario, paginaPedida) => {
+    const total = await model.countByUsuario(idUsuario);
+    const totalPaginas = Math.max(1, Math.ceil(total / ITENS_POR_PAGINA));
+    const pagina = Math.min(Math.max(1, parseInt(paginaPedida, 10) || 1), totalPaginas);
+    const itens = await model.findByUsuarioPaginado(idUsuario, ITENS_POR_PAGINA, (pagina - 1) * ITENS_POR_PAGINA);
+    return { itens, pagina, totalPaginas, total };
+};
+
 // ===== PERFIL DO USUÁRIO =====
+// ?pc= página das compras | ?pd= página dos diagnósticos
 exports.perfil = async (req, res) => {
     try {
         const usuarios = await usuariosModel.findById(req.session.usuarioId);
         const usuario = usuarios[0];
-        const diagnosticos = await diagnosticosModel.findByUsuario(req.session.usuarioId);
-        const compras = await comprasModel.findByUsuario(req.session.usuarioId);
+        const paginaCompras = await paginar(comprasModel, req.session.usuarioId, req.query.pc);
+        const paginaDiagnosticos = await paginar(diagnosticosModel, req.session.usuarioId, req.query.pd);
         let endereco = null;
         let erroCep = false;
         try { endereco = await consultarCep(usuario.cep_usuario); } catch (erro) { erroCep = true; }
         res.render('perfil', {
             titulo: 'Meu Perfil',
             usuario,
-            diagnosticos,
-            compras,
+            diagnosticos: paginaDiagnosticos.itens,
+            compras: paginaCompras.itens,
+            paginaCompras,
+            paginaDiagnosticos,
+            itensPorPagina: ITENS_POR_PAGINA,
             endereco,
             erroCep
         });

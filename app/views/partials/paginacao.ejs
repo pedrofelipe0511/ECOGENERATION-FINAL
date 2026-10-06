@@ -1,0 +1,52 @@
+<%#
+  Paginação reutilizável do perfil.
+  Recebe: pagina, totalPaginas, total, itensPorPagina, parametro (nome na URL),
+          outros (demais parâmetros da URL, preservados), ancora (id da seção), rotulo
+%>
+<% if (totalPaginas > 1) { %>
+  <%
+    const linkPara = (numero) => {
+      const query = new URLSearchParams(outros);
+      query.set(parametro, numero);
+      return '?' + query.toString() + '#' + ancora;
+    };
+    // Mostra a primeira, a última e as vizinhas da atual; o resto vira "…"
+    const numeros = [];
+    for (let n = 1; n <= totalPaginas; n++) {
+      if (n === 1 || n === totalPaginas || Math.abs(n - pagina) <= 1) numeros.push(n);
+      else if (numeros[numeros.length - 1] !== '…') numeros.push('…');
+    }
+    const primeiro = (pagina - 1) * itensPorPagina + 1;
+    const ultimo = Math.min(pagina * itensPorPagina, total);
+  %>
+  <nav class="perfil-paginacao" aria-label="<%= rotulo %>">
+    <p class="perfil-paginacao-resumo">Mostrando <%= primeiro %>–<%= ultimo %> de <%= total %></p>
+    <ul class="perfil-paginacao-lista">
+      <li>
+        <% if (pagina > 1) { %>
+          <a href="<%= linkPara(pagina - 1) %>" class="perfil-pagina" aria-label="Página anterior">&#8249;<span class="perfil-pagina-texto"> Anterior</span></a>
+        <% } else { %>
+          <span class="perfil-pagina desabilitada" aria-hidden="true">&#8249;<span class="perfil-pagina-texto"> Anterior</span></span>
+        <% } %>
+      </li>
+      <% numeros.forEach((n) => { %>
+        <li>
+          <% if (n === '…') { %>
+            <span class="perfil-pagina-reticencias" aria-hidden="true">…</span>
+          <% } else if (n === pagina) { %>
+            <span class="perfil-pagina ativa" aria-current="page"><%= n %></span>
+          <% } else { %>
+            <a href="<%= linkPara(n) %>" class="perfil-pagina" aria-label="Página <%= n %>"><%= n %></a>
+          <% } %>
+        </li>
+      <% }) %>
+      <li>
+        <% if (pagina < totalPaginas) { %>
+          <a href="<%= linkPara(pagina + 1) %>" class="perfil-pagina" aria-label="Próxima página"><span class="perfil-pagina-texto">Próxima </span>&#8250;</a>
+        <% } else { %>
+          <span class="perfil-pagina desabilitada" aria-hidden="true"><span class="perfil-pagina-texto">Próxima </span>&#8250;</span>
+        <% } %>
+      </li>
+    </ul>
+  </nav>
+<% } %>

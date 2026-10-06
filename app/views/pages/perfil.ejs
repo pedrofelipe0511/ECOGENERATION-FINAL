@@ -92,7 +92,7 @@
       </section>
 
     <!-- COMPRAS -->
-    <section class="perfil-secao">
+    <section class="perfil-secao" id="minhas-compras">
       <h2>Minhas Compras</h2>
       <% if (compras && compras.length > 0) { %>
         <ul class="compras-lista">
@@ -114,6 +114,11 @@
             </li>
           <% }) %>
         </ul>
+        <%- include('../partials/paginacao', {
+          pagina: paginaCompras.pagina, totalPaginas: paginaCompras.totalPaginas, total: paginaCompras.total,
+          itensPorPagina, parametro: 'pc', outros: { pd: paginaDiagnosticos.pagina },
+          ancora: 'minhas-compras', rotulo: 'Paginação das compras'
+        }) %>
       <% } else { %>
         <p class="sem-itens">Você ainda não realizou nenhuma compra.</p>
         <a href="/ecoloja" class="btn-acao">Ir para a loja</a>
@@ -121,7 +126,7 @@
     </section>
 
     <!-- DIAGNÓSTICOS -->
-    <section class="perfil-secao">
+    <section class="perfil-secao" id="meus-diagnosticos">
       <h2>Meus Diagnósticos</h2>
       <% if (diagnosticos && diagnosticos.length > 0) { %>
         <ul class="diagnosticos-lista">
@@ -143,6 +148,11 @@
             </li>
           <% }) %>
         </ul>
+        <%- include('../partials/paginacao', {
+          pagina: paginaDiagnosticos.pagina, totalPaginas: paginaDiagnosticos.totalPaginas, total: paginaDiagnosticos.total,
+          itensPorPagina, parametro: 'pd', outros: { pc: paginaCompras.pagina },
+          ancora: 'meus-diagnosticos', rotulo: 'Paginação dos diagnósticos'
+        }) %>
       <% } else { %>
         <p class="sem-itens">Você ainda não fez nenhum diagnóstico.</p>
         <a href="/diagnostico" class="btn-acao">Fazer diagnóstico agora</a>
