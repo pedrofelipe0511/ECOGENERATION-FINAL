@@ -24,14 +24,14 @@ header:where(.site-header) {
 
 /* Logo centralizada no mobile */
 .logo-figure {
-  max-width: 180px;
+  max-width: 170px;
   width: 100%;
   margin: 0 auto;
   transition: max-width 0.3s ease;
 }
 
 [data-theme="dark"] .logo-figure {
-  max-width: 160px;
+  max-width: 170px;
 }
 
 .logo {
@@ -123,6 +123,9 @@ header:where(.site-header) {
   padding: 5px 10px;
   border-radius: 5px;
 }
+
+/* Item de tema do menu: só aparece no celular */
+.nav-categorias li.nav-tema { display: none; }
 
 /* Header actions container */
 .header-actions {
@@ -243,13 +246,13 @@ header:where(.site-header) {
 
   /* logo maior e alinhada à esquerda */
   .logo-figure {
-    max-width: 320px;
+    max-width: 265px;
     margin: 0;
     flex: 0 0 auto;
   }
 
   [data-theme="dark"] .logo-figure {
-    max-width: 280px;
+    max-width: 265px;
   }
 
   .logo {
@@ -309,11 +312,11 @@ header:where(.site-header) {
   }
 
   .logo-figure {
-    max-width: 370px;
+    max-width: 300px;
   }
 
   [data-theme="dark"] .logo-figure {
-    max-width: 320px;
+    max-width: 300px;
   }
 
   .logo {
@@ -473,13 +476,14 @@ header:where(.site-header) {
 
   .header-container {
     display: grid;
-    grid-template-columns: 44px minmax(0, 1fr) auto auto auto;
+    /* Duas colunas de cada lado (iguais) = logo exatamente no centro */
+    grid-template-columns: 44px 44px minmax(0, 1fr) 44px 44px;
     grid-template-areas:
-      "menu logo tema conta carrinho"
+      "menu . logo conta carrinho"
       "busca busca busca busca busca";
     align-items: center;
-    column-gap: 4px;
-    row-gap: 10px;
+    column-gap: 6px;
+    row-gap: 12px;
   }
 
   .header-actions,
@@ -510,25 +514,46 @@ header:where(.site-header) {
   .logo-figure,
   [data-theme="dark"] .logo-figure {
     grid-area: logo;
-    max-width: 150px;
+    max-width: 176px;
     margin: 0;
-    justify-self: start;
+    justify-self: center;
+    line-height: 0;
   }
 
-  /* Ícones redondos do mesmo tamanho = linha harmônica */
-  .dark-toggle { grid-area: tema; width: 44px; height: 44px; }
-
-  .dark-toggle .toggle-switch {
-    width: 38px;
-    height: 22px;
+  .logo-figure a {
+    display: block;
+    padding: 6px 0; /* área de toque maior sem aumentar a logo */
   }
 
-  .dark-toggle .toggle-switch::after {
-    width: 14px;
-    height: 14px;
+  /* O tema sai do topo e vai para dentro do menu */
+  .search-actions .dark-toggle { display: none; }
+
+  .nav-categorias li.nav-tema {
+    display: block;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #e0e0e0;
   }
 
-  [data-theme="dark"] .dark-toggle .toggle-switch::after { left: 19px; }
+  .dark-toggle.dark-toggle-menu {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 16px;
+    justify-content: space-between;
+    border-radius: 10px;
+    color: #1b5e20;
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .dark-toggle.dark-toggle-menu:hover,
+  .dark-toggle.dark-toggle-menu:focus-visible { background: #e8f5e9; }
+
+  [data-theme="dark"] .nav-categorias li.nav-tema { border-top-color: #2a4a2a; }
+  [data-theme="dark"] .dark-toggle.dark-toggle-menu { color: #7fcf80; }
+  [data-theme="dark"] .dark-toggle.dark-toggle-menu:hover,
+  [data-theme="dark"] .dark-toggle.dark-toggle-menu:focus-visible { background: #1e3a1e; }
 
   .carrinho-link {
     grid-area: carrinho;
@@ -673,9 +698,6 @@ header:where(.site-header) {
 
   /* Botão de sair separado e em vermelho discreto */
   .nav-categorias li a[href="/logout"] {
-    margin-top: 4px;
-    border-top: 1px solid #e0e0e0;
-    border-radius: 0 0 10px 10px;
     color: #b71c1c;
   }
 
@@ -686,7 +708,7 @@ header:where(.site-header) {
   }
   [data-theme="dark"] .nav-categorias li a:hover,
   [data-theme="dark"] .nav-categorias li a:focus-visible { background: #1e3a1e; }
-  [data-theme="dark"] .nav-categorias li a[href="/logout"] { color: #ef9a9a; border-top-color: #2a4a2a; }
+  [data-theme="dark"] .nav-categorias li a[href="/logout"] { color: #ef9a9a; }
   [data-theme="dark"] .hamburger span { background: #a5d6a7; }
   [data-theme="dark"] .search-actions .login-btn.login-header-btn { background: transparent; color: #a5d6a7; }
   [data-theme="dark"] .search-actions .login-btn.login-header-btn:hover,
@@ -709,9 +731,61 @@ header:where(.site-header) {
 
 /* Celulares bem estreitos (ex.: 320px): ícones um pouco menores para a logo respirar */
 @media (max-width: 359px) {
-  .header-container { grid-template-columns: 40px minmax(0, 1fr) auto auto auto; column-gap: 0; }
+  .header-container { grid-template-columns: 40px 40px minmax(0, 1fr) 40px 40px; column-gap: 2px; }
   .hamburger,
   .carrinho-link,
   .search-actions .login-btn.login-header-btn { width: 40px !important; }
-  .dark-toggle { width: 42px; }
+}
+
+/* Computador: header mais alto e elementos com mais respiro
+   (tudo dentro da mesma largura do conteúdo da página) */
+@media (min-width: 1366px) {
+  header:where(.site-header) {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .header-container {
+    gap: 40px;
+  }
+
+  .logo-figure,
+  [data-theme="dark"] .logo-figure {
+    max-width: 260px;
+  }
+
+  .nav-categorias ul {
+    gap: 32px;
+  }
+
+  /* As ações ocupam o espaço que sobra; a busca é quem encolhe se faltar */
+  .header-actions {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 36px;
+  }
+
+  .header-actions .search-actions {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 18px;
+  }
+
+  .header-actions .search-form {
+    flex: 1 1 0;
+    min-width: 150px;
+  }
+
+  .search-form input {
+    padding: 13px 16px;
+  }
+
+  .search-form button {
+    height: 46px;
+    min-width: 46px;
+  }
+
+  .search-actions .login-btn {
+    padding: 13px 24px;
+  }
 }

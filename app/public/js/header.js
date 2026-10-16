@@ -49,13 +49,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateLogo(saved);
 
-  var btn = document.getElementById('darkToggle');
-  if (btn) {
+  // Há dois botões de tema (topo no computador, dentro do menu no celular)
+  var botoes = document.querySelectorAll('.dark-toggle');
+  function marcarBotoes(theme) {
+    botoes.forEach(function(b) { b.setAttribute('aria-pressed', String(theme === 'dark')); });
+  }
+  marcarBotoes(saved);
+
+  botoes.forEach(function(btn) {
     btn.addEventListener('click', function() {
       var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       localStorage.setItem('eco-theme', next);
       updateLogo(next);
+      marcarBotoes(next);
     });
-  }
+  });
 })();
