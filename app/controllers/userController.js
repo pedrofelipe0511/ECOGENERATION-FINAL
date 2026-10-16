@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require('express-validator');
 const { usuariosModel } = require("../models/usuariosModel");
 const { diagnosticosModel } = require("../models/diagnosticosModel");
-const { comprasModel } = require("../models/comprasModel");
+const { pedidosModel, ROTULO_STATUS, ROTULO_PAGAMENTO } = require("../models/pedidosModel");
 const { regenerarSessao, salvarSessao, CHAVES_ADMIN } = require('../helpers/sessao');
 const { removerArquivo } = require('../helpers/imagens');
 const path = require('path');
@@ -36,7 +36,7 @@ exports.perfil = async (req, res) => {
     try {
         const usuarios = await usuariosModel.findById(req.session.usuarioId);
         const usuario = usuarios[0];
-        const paginaCompras = await paginar(comprasModel, req.session.usuarioId, req.query.pc);
+        const paginaCompras = await paginar(pedidosModel, req.session.usuarioId, req.query.pc);
         const paginaDiagnosticos = await paginar(diagnosticosModel, req.session.usuarioId, req.query.pd);
         let endereco = null;
         let erroCep = false;
@@ -45,7 +45,9 @@ exports.perfil = async (req, res) => {
             titulo: 'Meu Perfil',
             usuario,
             diagnosticos: paginaDiagnosticos.itens,
-            compras: paginaCompras.itens,
+            pedidos: paginaCompras.itens,
+            rotuloStatus: ROTULO_STATUS,
+            rotuloPagamento: ROTULO_PAGAMENTO,
             paginaCompras,
             paginaDiagnosticos,
             itensPorPagina: ITENS_POR_PAGINA,

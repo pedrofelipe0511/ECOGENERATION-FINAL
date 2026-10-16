@@ -1,12 +1,12 @@
 const { validationResult } = require('express-validator');
 const { adminModel } = require("../../models/adminModel");
-const { comprasModel } = require("../../models/comprasModel");
+const { pedidosModel, ROTULO_STATUS } = require("../../models/pedidosModel");
 
 exports.listar = async (req, res) => {
   try {
     const usuarios = await adminModel.getAllUsuarios();
-    const pedidos = await comprasModel.findAll();
-    res.render('admin-usuarios', { titulo: 'Gerenciar Usuários', usuarios, pedidos });
+    const pedidos = await pedidosModel.findAll();
+    res.render('admin-usuarios', { titulo: 'Gerenciar Usuários', usuarios, pedidos, rotuloStatus: ROTULO_STATUS });
   } catch (erro) {
     console.log(erro);
     res.redirect('/admin');

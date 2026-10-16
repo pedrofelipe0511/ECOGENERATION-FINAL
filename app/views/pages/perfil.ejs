@@ -93,34 +93,45 @@
 
     <!-- COMPRAS -->
     <section class="perfil-secao" id="minhas-compras">
-      <h2>Minhas Compras</h2>
-      <% if (compras && compras.length > 0) { %>
-        <ul class="compras-lista">
-          <% compras.forEach(function(compra) { %>
-            <li class="compra-item">
-              <figure class="compra-item-img">
-                <img src="/imagens/<%= compra.imagem_produto %>" alt="<%= compra.nome_produto %>">
-              </figure>
-              <section class="compra-item-info" aria-label="Detalhes da compra">
-                <h3><%= compra.nome_produto %></h3>
-                <p class="compra-item-preco">R$ <%= compra.preco_produto %></p>
-                <p class="compra-item-status">
-                  <span class="badge-confirmado"><%= compra.status_compra %></span>
-                </p>
-              </section>
-              <aside class="compra-item-id" aria-label="Número do pedido">
-                <p>Pedido #<%= compra.id_compra %></p>
-              </aside>
+      <h2>Meus Pedidos</h2>
+      <% if (pedidos && pedidos.length > 0) { %>
+        <ul class="pedidos-lista">
+          <% pedidos.forEach(function(pedido) { %>
+            <li class="pedido-item">
+              <header class="pedido-cabecalho">
+                <h3>Pedido #<%= pedido.id_pedido %></h3>
+                <span class="pedido-status <%= pedido.status_pedido %>"><%= rotuloStatus[pedido.status_pedido] || pedido.status_pedido %></span>
+              </header>
+              <% if (pedido.data_pedido) { %>
+                <p class="pedido-data"><%= new Date(pedido.data_pedido).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) %></p>
+              <% } %>
+              <ul class="pedido-itens">
+                <% pedido.itens.forEach(function(item) { %>
+                  <li>
+                    <img src="/imagens/<%= item.imagem_produto %>" alt="">
+                    <span><%= item.nome_produto %></span>
+                    <span class="pedido-item-preco">R$ <%= Number(item.preco_unitario).toFixed(2).replace('.', ',') %></span>
+                  </li>
+                <% }) %>
+              </ul>
+              <footer class="pedido-rodape">
+                <p class="pedido-total">Total: <strong>R$ <%= Number(pedido.total_pedido).toFixed(2).replace('.', ',') %></strong></p>
+                <% if (pedido.status_pedido === 'aguardando_pagamento' && pedido.id_preferencia) { %>
+                  <a href="/pedido/<%= pedido.id_pedido %>/pagar" class="btn-acao btn-pagar">Pagar agora</a>
+                <% } else if (pedido.status_pagamento && pedido.status_pagamento !== 'nao_aplicavel' && pedido.status_pagamento !== 'pendente') { %>
+                  <p class="pedido-pagamento">Pagamento: <%= rotuloPagamento[pedido.status_pagamento] || pedido.status_pagamento %></p>
+                <% } %>
+              </footer>
             </li>
           <% }) %>
         </ul>
         <%- include('../partials/paginacao', {
           pagina: paginaCompras.pagina, totalPaginas: paginaCompras.totalPaginas, total: paginaCompras.total,
           itensPorPagina, parametro: 'pc', outros: { pd: paginaDiagnosticos.pagina },
-          ancora: 'minhas-compras', rotulo: 'Paginação das compras'
+          ancora: 'minhas-compras', rotulo: 'Paginação dos pedidos'
         }) %>
       <% } else { %>
-        <p class="sem-itens">Você ainda não realizou nenhuma compra.</p>
+        <p class="sem-itens">Você ainda não fez nenhum pedido.</p>
         <a href="/ecoloja" class="btn-acao">Ir para a loja</a>
       <% } %>
     </section>

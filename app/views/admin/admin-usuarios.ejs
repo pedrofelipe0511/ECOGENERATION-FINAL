@@ -122,23 +122,23 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Pedido</th>
               <th>Cliente</th>
-              <th>Produto</th>
-              <th>Valor</th>
+              <th>Itens</th>
+              <th>Total</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            <% pedidos.forEach(pedido => { %>
+            <% pedidos.slice(0, 10).forEach(pedido => { %>
               <tr>
-                <td>#<%= pedido.id_compra %></td>
+                <td>#<%= pedido.id_pedido %></td>
                 <td><%= pedido.nome_usuario || 'Visitante' %></td>
-                <td><%= pedido.nome_produto %></td>
-                <td>R$ <%= parseFloat(pedido.preco_produto).toFixed(2) %></td>
+                <td><%= pedido.itens.map(i => i.nome_produto).join(' + ') %></td>
+                <td>R$ <%= Number(pedido.total_pedido).toFixed(2).replace('.', ',') %></td>
                 <td>
-                  <span class="badge badge-<%= pedido.status_compra %>">
-                    <%= pedido.status_compra %>
+                  <span class="badge badge-<%= pedido.status_pedido %>">
+                    <%= rotuloStatus[pedido.status_pedido] || pedido.status_pedido %>
                   </span>
                 </td>
               </tr>

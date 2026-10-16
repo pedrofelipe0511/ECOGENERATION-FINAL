@@ -1,18 +1,12 @@
 const { adminModel } = require("../../models/adminModel");
-const { comprasModel } = require("../../models/comprasModel");
+const { pedidosModel } = require("../../models/pedidosModel");
 
 exports.dashboard = async (req, res) => {
   try {
     const totalUsuarios = await adminModel.countUsuarios();
     const totalDiagnosticos = await adminModel.countDiagnosticos();
     const totalProdutos = await adminModel.countProdutos();
-    const pedidos = await comprasModel.findAll();
-    let totalPedidos = Array.isArray(pedidos) ? pedidos.length : 0;
-
-    if (totalPedidos === 0) {
-      const fallbackCount = await comprasModel.countAll();
-      totalPedidos = Number.isInteger(fallbackCount) ? fallbackCount : totalPedidos;
-    }
+    const totalPedidos = await pedidosModel.countAll();
 
     const usuariosRecentes = await adminModel.getUsuariosRecentes();
     const diagnosticosRecentes = await adminModel.getDiagnosticosRecentes();

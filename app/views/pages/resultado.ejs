@@ -47,7 +47,6 @@
 
     <%
       const brl = (valor) => Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const linkComprarKit = (kit) => '/confirmar-kit?' + kit.itens.map((p) => 'item=' + p.id_produto).join('&');
       const marcador = { ok: { simbolo: '✅', texto: 'Coberto' }, parcial: { simbolo: '⚠️', texto: 'Cobre em parte' }, nao: { simbolo: '❌', texto: 'Não coberto' } };
       const vulnLabel = vulnerabilidade >= 7 ? 'Alta' : vulnerabilidade >= 3 ? 'Média' : 'Baixa';
       const prepLabel = preparo >= 7 ? 'Alto'  : preparo >= 3 ? 'Médio' : 'Baixo';
@@ -162,7 +161,10 @@
             <% }); %>
           </ul>
 
-          <a href="<%= linkComprarKit(plano.kit) %>" class="btn-comprar-kit">Comprar kit por <%= brl(plano.kit.total) %></a>
+          <form action="/carrinho/adicionar-kit" method="POST">
+            <% plano.kit.itens.forEach(function(produto) { %><input type="hidden" name="item" value="<%= produto.id_produto %>"><% }); %>
+            <button type="submit" class="btn-comprar-kit">Comprar kit por <%= brl(plano.kit.total) %></button>
+          </form>
         </article>
       <% } else { %>
         <p class="kit-vazio">
@@ -182,7 +184,10 @@
               <li><a href="/produto/<%= produto.id_produto %>"><%= produto.nome_produto %></a> — <%= brl(produto.preco_produto) %></li>
             <% }); %>
           </ul>
-          <a href="<%= linkComprarKit(plano.alternativa) %>" class="btn-comprar-alternativa">Comprar este kit</a>
+          <form action="/carrinho/adicionar-kit" method="POST">
+            <% plano.alternativa.itens.forEach(function(produto) { %><input type="hidden" name="item" value="<%= produto.id_produto %>"><% }); %>
+            <button type="submit" class="btn-comprar-alternativa">Comprar este kit</button>
+          </form>
         </aside>
       <% } %>
 
