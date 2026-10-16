@@ -426,27 +426,6 @@ header:where(.site-header) {
 [data-theme="dark"] .carrinho-link:hover,
 [data-theme="dark"] .carrinho-link:focus-visible { background: rgba(255, 255, 255, 0.08); }
 
-/* Celular: busca na primeira linha (largura toda); carrinho, conta e tema embaixo */
-@media (max-width: 699px) {
-  .search-actions {
-    flex-wrap: wrap;
-  }
-
-  .search-actions .search-form {
-    flex: 1 1 100%;
-  }
-
-  .search-actions .login-btn {
-    order: 1;
-    flex: 1 1 auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .search-actions .carrinho-link { order: 2; }
-  .search-actions .dark-toggle { order: 3; }
-}
-
 /* Tablets: logo e menu na primeira linha; busca, carrinho e conta na segunda
    (antes tudo ficava numa linha só e a página rolava para o lado) */
 @media (min-width: 700px) and (max-width: 1365px) {
@@ -472,4 +451,267 @@ header:where(.site-header) {
   max-width: 170px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Ícone/avatar da conta: só aparecem no celular (no computador fica o texto) */
+.login-header-btn .login-icone,
+.login-header-btn .login-avatar {
+  display: none;
+}
+
+/* ── CELULAR (até 699px) ───────────────────────────────────────────
+   Duas linhas, como nos apps de loja:
+   1ª linha: menu · logo · tema · conta · carrinho
+   2ª linha: busca na largura toda (é a ação mais usada numa loja)
+   "display: contents" deixa os filhos dos wrappers participarem
+   direto da grade, sem precisar mudar o HTML do computador. */
+@media (max-width: 699px) {
+  header:where(.site-header) {
+    padding: 10px var(--margem-lateral, 16px) 14px;
+    gap: 0;
+  }
+
+  .header-container {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto auto auto;
+    grid-template-areas:
+      "menu logo tema conta carrinho"
+      "busca busca busca busca busca";
+    align-items: center;
+    column-gap: 4px;
+    row-gap: 10px;
+  }
+
+  .header-actions,
+  .search-actions {
+    display: contents;
+  }
+
+  /* Botão do menu: área de toque de 44px (recomendação de acessibilidade) */
+  .hamburger {
+    grid-area: menu;
+    position: static;
+    transform: none;
+    width: 44px;
+    height: 44px;
+    padding: 0 11px;
+    gap: 5px;
+    border-radius: 12px;
+  }
+
+  .hamburger span {
+    height: 2.5px;
+    border-radius: 2px;
+  }
+
+  .hamburger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+  .logo-figure,
+  [data-theme="dark"] .logo-figure {
+    grid-area: logo;
+    max-width: 150px;
+    margin: 0;
+    justify-self: start;
+  }
+
+  /* Ícones redondos do mesmo tamanho = linha harmônica */
+  .dark-toggle { grid-area: tema; width: 44px; height: 44px; }
+
+  .dark-toggle .toggle-switch {
+    width: 38px;
+    height: 22px;
+  }
+
+  .dark-toggle .toggle-switch::after {
+    width: 14px;
+    height: 14px;
+  }
+
+  [data-theme="dark"] .dark-toggle .toggle-switch::after { left: 19px; }
+
+  .carrinho-link {
+    grid-area: carrinho;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .carrinho-qtde {
+    top: 2px;
+    right: 0;
+    box-shadow: 0 0 0 2px #a0d995; /* contorno com a cor do header */
+  }
+
+  /* Conta: vira ícone (visitante) ou avatar com a inicial (logado) */
+  .search-actions .login-btn.login-header-btn {
+    grid-area: conta;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px !important;
+    height: 44px;
+    max-width: none;
+    padding: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: #1b5e20;
+  }
+
+  .search-actions .login-btn.login-header-btn:hover,
+  .search-actions .login-btn.login-header-btn:focus-visible,
+  .hamburger:hover,
+  .hamburger:focus-visible {
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  .login-header-btn .login-icone {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  .login-header-btn .login-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #2e7d32;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  /* Texto escondido só visualmente: leitores de tela ainda leem */
+  .login-header-btn .login-texto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* Busca: campo arredondado com a lupa dentro */
+  .header-actions .search-form {
+    grid-area: busca;
+    position: relative;
+    margin: 0;
+    width: 100% !important;
+  }
+
+  .header-actions .search-form input {
+    width: 100% !important;
+    height: 46px;
+    padding: 0 54px 0 16px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(27, 94, 32, 0.18);
+    font-size: 1rem; /* 16px evita o zoom automático do iPhone */
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .header-actions .search-form input:focus {
+    outline: none;
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.25);
+  }
+
+  .header-actions .search-form button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px !important;
+    min-width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .header-actions .search-form button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Menu aberto: cartão que desce logo abaixo do header */
+  .nav-categorias.open {
+    top: calc(100% - 4px);
+    left: var(--margem-lateral, 16px);
+    right: var(--margem-lateral, 16px);
+    width: auto;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid rgba(46, 125, 50, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+    animation: menu-descer 0.18s ease-out;
+  }
+
+  .nav-categorias ul {
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  .nav-categorias li a,
+  .nav-categorias li.active a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+  }
+
+  .nav-categorias li a:hover,
+  .nav-categorias li a:focus-visible {
+    background: #e8f5e9;
+  }
+
+  /* Botão de sair separado e em vermelho discreto */
+  .nav-categorias li a[href="/logout"] {
+    margin-top: 4px;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0 0 10px 10px;
+    color: #b71c1c;
+  }
+
+  [data-theme="dark"] .nav-categorias.open {
+    background: #142814;
+    border-color: #2a4a2a;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+  }
+  [data-theme="dark"] .nav-categorias li a:hover,
+  [data-theme="dark"] .nav-categorias li a:focus-visible { background: #1e3a1e; }
+  [data-theme="dark"] .nav-categorias li a[href="/logout"] { color: #ef9a9a; border-top-color: #2a4a2a; }
+  [data-theme="dark"] .hamburger span { background: #a5d6a7; }
+  [data-theme="dark"] .search-actions .login-btn.login-header-btn { background: transparent; color: #a5d6a7; }
+  [data-theme="dark"] .search-actions .login-btn.login-header-btn:hover,
+  [data-theme="dark"] .hamburger:hover { background: rgba(255, 255, 255, 0.08); }
+  [data-theme="dark"] .login-header-btn .login-avatar { background: #a5d6a7; color: #0d1f0d; }
+  [data-theme="dark"] .header-actions .search-form input { background: #1a2a1a; border-color: #2a4a2a; box-shadow: none; }
+  [data-theme="dark"] .header-actions .search-form input:focus { border-color: #7fcf80; }
+  [data-theme="dark"] .carrinho-qtde { box-shadow: 0 0 0 2px #0d1f0d; }
+}
+
+@keyframes menu-descer {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-categorias.open { animation: none; }
+  .hamburger span { transition: none; }
+}
+
+/* Celulares bem estreitos (ex.: 320px): ícones um pouco menores para a logo respirar */
+@media (max-width: 359px) {
+  .header-container { grid-template-columns: 40px minmax(0, 1fr) auto auto auto; column-gap: 0; }
+  .hamburger,
+  .carrinho-link,
+  .search-actions .login-btn.login-header-btn { width: 40px !important; }
+  .dark-toggle { width: 42px; }
 }
