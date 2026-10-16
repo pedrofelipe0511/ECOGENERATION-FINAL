@@ -429,24 +429,86 @@ header:where(.site-header) {
 [data-theme="dark"] .carrinho-link:hover,
 [data-theme="dark"] .carrinho-link:focus-visible { background: rgba(255, 255, 255, 0.08); }
 
-/* Tablets: logo e menu na primeira linha; busca, carrinho e conta na segunda
-   (antes tudo ficava numa linha só e a página rolava para o lado) */
-@media (min-width: 700px) and (max-width: 1365px) {
-  .header-container {
-    flex-wrap: wrap;
-    row-gap: 12px;
+/* Tablets (700–1023px): duas linhas organizadas em grade
+   1ª linha: logo à esquerda · carrinho, conta e tema à direita
+   2ª linha: links à esquerda · busca ocupando o resto */
+@media (min-width: 700px) and (max-width: 1023px) {
+  header:where(.site-header) {
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 
+  .header-container {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+    grid-template-areas:
+      "logo . carrinho conta tema"
+      "nav busca busca busca busca";
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 18px;
+  }
+
+  .header-actions,
+  .header-actions .search-actions {
+    display: contents;
+  }
+
+  .logo-figure,
+  [data-theme="dark"] .logo-figure {
+    grid-area: logo;
+    max-width: 240px;
+  }
+
+  .nav-categorias { grid-area: nav; }
+  .nav-categorias ul { gap: 24px; }
+
+  .header-actions .search-form {
+    grid-area: busca;
+    width: 100% !important;
+    max-width: none;
+    margin: 0;
+  }
+
+  .carrinho-link { grid-area: carrinho; }
+  .search-actions .login-btn { grid-area: conta; }
+  .dark-toggle { grid-area: tema; }
+}
+
+/* Telas médias (1024–1365px): tudo numa linha, como no computador, mais compacto */
+@media (min-width: 1024px) and (max-width: 1365px) {
+  header:where(.site-header) {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .header-container { gap: 24px; }
+
+  .logo-figure,
+  [data-theme="dark"] .logo-figure {
+    max-width: 210px;
+  }
+
+  .nav-categorias ul { gap: 20px; }
+
   .header-actions {
-    flex: 1 1 100%;
-    flex-wrap: wrap;
-    row-gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 24px;
   }
 
   .header-actions .search-actions {
-    flex: 1 1 480px;
+    flex: 1 1 auto;
     min-width: 0;
+    gap: 12px;
   }
+
+  .header-actions .search-form {
+    flex: 1 1 0;
+    min-width: 120px;
+  }
+
+  .search-actions .login-btn.login-header-btn { max-width: 140px; }
 }
 
 /* Nome muito longo no botão da conta termina com "…" em vez de empurrar o cabeçalho */
