@@ -3,16 +3,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const navCategorias = document.getElementById('nav-categorias');
   if (!hamburger || !navCategorias) return;
 
+  // Abre/fecha o menu e avisa o leitor de tela (aria-expanded)
+  const definirMenu = (aberto) => {
+    navCategorias.classList.toggle('open', aberto);
+    hamburger.classList.toggle('open', aberto);
+    hamburger.setAttribute('aria-expanded', String(aberto));
+    hamburger.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+  };
+
   hamburger.addEventListener('click', () => {
-    navCategorias.classList.toggle('open');
-    hamburger.classList.toggle('open');
+    definirMenu(!navCategorias.classList.contains('open'));
   });
 
   document.querySelectorAll('#nav-categorias a').forEach(link => {
-    link.addEventListener('click', () => {
-      navCategorias.classList.remove('open');
-      hamburger.classList.remove('open');
-    });
+    link.addEventListener('click', () => definirMenu(false));
+  });
+
+  // Fecha com Esc (e devolve o foco ao botão) ou tocando fora do menu
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navCategorias.classList.contains('open')) {
+      definirMenu(false);
+      hamburger.focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (navCategorias.classList.contains('open') &&
+        !navCategorias.contains(e.target) && !hamburger.contains(e.target)) {
+      definirMenu(false);
+    }
   });
 });
 

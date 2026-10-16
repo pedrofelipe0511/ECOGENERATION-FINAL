@@ -6,7 +6,7 @@
       </a>
     </figure>
 
-    <button class="hamburger" id="hamburger" aria-label="Abrir menu">
+    <button type="button" class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-categorias">
       <span></span><span></span><span></span>
     </button>
 
@@ -34,7 +34,7 @@
 
       <section class="search-actions" aria-label="Busca e acesso da conta">
         <form action="/search" method="get" class="search-form" aria-label="Buscar produtos">
-          <input type="text" name="q" placeholder="Pesquisar..." aria-label="Campo de busca" />
+          <input type="search" name="q" placeholder="Buscar produtos..." aria-label="Buscar produtos" enterkeyhint="search" autocomplete="off" />
           <button type="submit" class="search-btn" aria-label="Pesquisar">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="11" cy="11" r="8"></circle>
@@ -51,10 +51,20 @@
           </svg>
           <% if (qtdeNoCarrinho > 0) { %><span class="carrinho-qtde" aria-hidden="true"><%= qtdeNoCarrinho > 99 ? '99+' : qtdeNoCarrinho %></span><% } %>
         </a>
-        <a href="<%= typeof usuarioLogado !== 'undefined' && usuarioLogado ? '/perfil' : '/login' %>" class="login-btn login-header-btn">
-          <%= typeof usuarioLogado !== 'undefined' && usuarioLogado ? 'Olá, ' + (usuarioNome ? usuarioNome.split(' ')[0] : 'Usuário') : 'Entrar' %>
+        <% const logado = typeof usuarioLogado !== 'undefined' && usuarioLogado;
+           const primeiroNome = logado ? (usuarioNome ? usuarioNome.split(' ')[0] : 'Usuário') : ''; %>
+        <a href="<%= logado ? '/perfil' : '/login' %>" class="login-btn login-header-btn<%= logado ? ' logado' : '' %>" aria-label="<%= logado ? 'Minha conta (' + primeiroNome + ')' : 'Entrar na conta' %>">
+          <% if (logado) { %>
+            <span class="login-avatar" aria-hidden="true"><%= primeiroNome.charAt(0).toUpperCase() %></span>
+          <% } else { %>
+            <svg class="login-icone" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          <% } %>
+          <span class="login-texto"><%= logado ? 'Olá, ' + primeiroNome : 'Entrar' %></span>
         </a>
-        <button class="dark-toggle" id="darkToggle" aria-label="Alternar modo escuro">
+        <button type="button" class="dark-toggle" id="darkToggle" aria-label="Alternar modo escuro">
           <span class="toggle-switch"></span>
         </button>
       </section>
