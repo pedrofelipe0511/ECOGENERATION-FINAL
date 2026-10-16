@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Meu Carrinho — EcoGeneration</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/carrinho.css">
+  <link rel="icon" href="/imagens/favicon2.png" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2e7d32">
+  <!-- simple-notify para Flash Messages -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
+  <!-- SDK do Mercado Pago: mostra o botão de pagamento (Wallet Brick) -->
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <% const brl = (valor) => Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); %>
+
+  <main class="carrinho-container" id="conteudo-principal">
+    <h1>Meu carrinho</h1>
+
+    <% if (avisos.length) { %>
+      <ul class="carrinho-avisos" role="status">
+        <% avisos.forEach(function(aviso) { %><li><%= aviso %></li><% }) %>
+      </ul>
+    <% } %>
+
+    <% if (!itens.length) { %>
+      <section class="carrinho-vazio">
+        <p>Seu carrinho está vazio.</p>
+        <nav class="carrinho-vazio-acoes" aria-label="Sugestões">
+          <a href="/ecoloja" class="btn-carrinho-principal">Ver produtos</a>
+          <a href="/diagnostico" class="btn-carrinho-secundario">Fazer o diagnóstico</a>
+        </nav>
+      </section>
+    <% } else { %>
+
+      <!-- Resumo do pedido -->
+      <section class="shopping-cart" aria-labelledby="titulo-resumo">
+        <h2 id="titulo-resumo" class="visually-hidden">Itens do carrinho</h2>
+        <table class="carrinho-tabela">
+          <thead>
+            <tr>
+              <th scope="col">Produto</th>
+              <th scope="col">Preço unitário</th>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Subtotal</th>
+              <th scope="col"><span class="visually-hidden">Remover</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% itens.forEach(function(item) { %>
+              <tr>
+                <td class="carrinho-produto" data-rotulo="Produto">
+                  <img src="/imagens/<%= item.imagem %>" alt="">
+                  <a href="/produto/<%= item.codproduto %>"><%= item.produto %></a>
+                </td>
+                <td data-rotulo="Preço unitário"><%= brl(item.preco) %></td>
+                <td data-rotulo="Quantidade">
+                  <span class="carrinho-qtde-controles">
+                    <form action="/carrinho/diminuir" method="POST">
+                      <input type="hidden" name="id" value="<%= item.codproduto %>">
+                      <button type="submit" class="btn-qtde" aria-label="Diminuir quantidade de <%= item.produto %>">−</button>
+                    </form>
+                    <span class="carrinho-qtde-valor" aria-label="Quantidade"><%= item.qtde %></span>
+                    <form action="/carrinho/adicionar" method="POST">
+                      <input type="hidden" name="id" value="<%= item.codproduto %>">
+                      <button type="submit" class="btn-qtde" aria-label="Aumentar quantidade de <%= item.produto %>">+</button>
+                    </form>
+                  </span>
+                </td>
+                <td data-rotulo="Subtotal" class="carrinho-subtotal"><%= brl(item.preco * item.qtde) %></td>
+                <td class="carrinho-remover">
+                  <form action="/carrinho/remover" method="POST">
+                    <input type="hidden" name="id" value="<%= item.codproduto %>">
+                    <button type="submit" class="btn-remover" aria-label="Remover <%= item.produto %> do carrinho">Remover</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row" colspan="3">Total</th>
+              <td colspan="2" class="carrinho-total"><%= brl(total) %></td>
+            </tr>
+          </tfoot>
+        </table>
+        <p class="carrinho-frete">Frete: a definir.</p>
+      </section>
+
+      <% if (entrega) { %>
+        <!-- Endereço de entrega -->
+        <section class="carrinho-secao" aria-labelledby="titulo-endereco">
+          <header class="carrinho-secao-topo">
+            <h2 id="titulo-endereco">Endereço de entrega</h2>
+            <a href="/perfil">Editar endereço</a>
+          </header>
+          <address class="carrinho-endereco">
+            <strong><%= entrega.usuario.nome_usuario %></strong>
+            <% if (entrega.endereco) { %>
+              <span><%= entrega.endereco.logradouro %><%= entrega.usuario.numero_usuario ? ', ' + entrega.usuario.numero_usuario : '' %><%= entrega.usuario.complemento_usuario ? ' — ' + entrega.usuario.complemento_usuario : '' %></span>
+              <span><%= entrega.endereco.bairro %> — <%= entrega.endereco.localidade %>/<%= entrega.endereco.uf %> · CEP <%= entrega.usuario.cep_usuario %></span>
+            <% } else if (entrega.erroCep) { %>
+              <span>Não conseguimos consultar o endereço agora.</span>
+            <% } else { %>
+              <span>Complete seu endereço no perfil antes de finalizar.</span>
+            <% } %>
+          </address>
+        </section>
+
+        <!-- Finalizar: cria a preferência e mostra o botão do Mercado Pago -->
+        <section class="carrinho-secao" id="area-checkout" data-public-key="<%= publicKey %>" aria-labelledby="titulo-pagamento">
+          <h2 id="titulo-pagamento">Pagamento</h2>
+          <p class="carrinho-aviso-pagamento">O pagamento é feito no ambiente seguro do <strong>Mercado Pago</strong> (PIX, cartão ou boleto). Os produtos ficam reservados por 30 minutos enquanto você paga.</p>
+          <p id="checkout-erro" class="carrinho-erro" role="alert" hidden></p>
+
+          <button type="button" id="checkout-btn" class="btn-carrinho-principal">Finalizar compra</button>
+
+          <section id="container-pagamento" class="container-pagamento" hidden aria-live="polite">
+            <p>Tudo pronto! Clique no botão abaixo para pagar <strong><%= brl(total) %></strong>:</p>
+            <div id="button-checkout"></div>
+            <button type="button" id="go-back" class="btn-carrinho-secundario">← Voltar ao carrinho</button>
+          </section>
+        </section>
+      <% } else { %>
+        <section class="carrinho-secao carrinho-login">
+          <p>Para finalizar a compra, entre na sua conta.</p>
+          <nav class="carrinho-vazio-acoes" aria-label="Entrar ou cadastrar">
+            <a href="/login" class="btn-carrinho-principal">Entrar</a>
+            <a href="/cadastro" class="btn-carrinho-secundario">Criar conta</a>
+          </nav>
+        </section>
+      <% } %>
+
+      <a href="/ecoloja" class="carrinho-continuar">← Continuar comprando</a>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <!-- simple-notify JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>
+  <!-- Função centralizada de notificações -->
+  <script src="/js/notify.js"></script>
+  <!-- Flash Message -->
+  <%- include('../partials/flash') %>
+  <!-- Interação do carrinho com o Mercado Pago -->
+  <script src="/js/comprar-carrinho.js"></script>
+</body>
+</html>

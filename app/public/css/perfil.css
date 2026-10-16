@@ -550,3 +550,119 @@ a.perfil-pagina:focus-visible {
     padding: 0;
   }
 }
+
+/* ── MEUS PEDIDOS ──────────────────────────────────────────── */
+.pedidos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.pedido-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  background: #ffffff;
+}
+
+.pedido-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.pedido-cabecalho h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #1a1a1a;
+}
+
+.pedido-status {
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #eeeeee;
+  color: #333333;
+}
+
+.pedido-status.aguardando_pagamento { background: #fff8e1; color: #7a4f00; }
+.pedido-status.pago                 { background: #e8f5e9; color: #1b5e20; }
+.pedido-status.enviado              { background: #e3f2fd; color: #0d47a1; }
+.pedido-status.entregue             { background: #f3e5f5; color: #5b1a7a; }
+.pedido-status.cancelado            { background: #ffebee; color: #b71c1c; }
+
+.pedido-data {
+  margin: 0.2rem 0 0.6rem;
+  font-size: 0.85rem;
+  color: #555555;
+}
+
+.pedido-itens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.pedido-itens li {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+  color: #1a1a1a;
+}
+
+.pedido-itens img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.pedido-item-preco {
+  color: #555555;
+  white-space: nowrap;
+}
+
+.pedido-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid #eeeeee;
+}
+
+.pedido-total,
+.pedido-pagamento {
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.pedido-pagamento {
+  font-size: 0.85rem;
+  color: #555555;
+}
+
+.btn-pagar {
+  margin: 0;
+}
+
+[data-theme="dark"] .pedido-item { background: #1f1f1f; border-color: #444; }
+[data-theme="dark"] .pedido-cabecalho h3,
+[data-theme="dark"] .pedido-itens li,
+[data-theme="dark"] .pedido-total { color: #e8e8e8; }
+[data-theme="dark"] .pedido-data,
+[data-theme="dark"] .pedido-item-preco,
+[data-theme="dark"] .pedido-pagamento { color: #bdbdbd; }
+[data-theme="dark"] .pedido-rodape { border-top-color: #3a3a3a; }

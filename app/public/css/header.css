@@ -5,7 +5,7 @@ header:where(.site-header) {
   align-items: center;
   gap: 12px;
   background-color: #a0d995;
-  padding: 16px 10px;
+  padding: 16px var(--margem-lateral, 16px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative; /* Necessário para posicionamento absoluto do botão */
   font-family: Arial, sans-serif;
@@ -232,7 +232,7 @@ header:where(.site-header) {
 @media (min-width: 700px) {
   /* header com layout em linha */
   header:where(.site-header) {
-    padding: 18px 20px;
+    padding: 18px var(--margem-lateral, 20px);
   }
 
   .header-container {
@@ -304,7 +304,7 @@ header:where(.site-header) {
 /* ----- Breakpoint: desktop largo ----- */
 @media (min-width: 900px) {
   .header-container {
-    max-width: 1100px;
+    max-width: var(--largura-conteudo, 1100px);
     gap: 15px;
   }
 
@@ -381,4 +381,95 @@ header:where(.site-header) {
 
 [data-theme="dark"] .dark-toggle .toggle-switch::after {
   left: 27px;
+}
+
+/* Ícone do carrinho com a quantidade de itens */
+.carrinho-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 38px;
+  border-radius: 5px;
+  color: #1b5e20;
+  flex-shrink: 0;
+}
+
+.carrinho-link svg {
+  width: 24px;
+  height: 24px;
+}
+
+.carrinho-link:hover,
+.carrinho-link:focus-visible {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.carrinho-qtde {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #b71c1c;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
+[data-theme="dark"] .carrinho-link { color: #a5d6a7; }
+[data-theme="dark"] .carrinho-link:hover,
+[data-theme="dark"] .carrinho-link:focus-visible { background: rgba(255, 255, 255, 0.08); }
+
+/* Celular: busca na primeira linha (largura toda); carrinho, conta e tema embaixo */
+@media (max-width: 699px) {
+  .search-actions {
+    flex-wrap: wrap;
+  }
+
+  .search-actions .search-form {
+    flex: 1 1 100%;
+  }
+
+  .search-actions .login-btn {
+    order: 1;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .search-actions .carrinho-link { order: 2; }
+  .search-actions .dark-toggle { order: 3; }
+}
+
+/* Tablets: logo e menu na primeira linha; busca, carrinho e conta na segunda
+   (antes tudo ficava numa linha só e a página rolava para o lado) */
+@media (min-width: 700px) and (max-width: 1365px) {
+  .header-container {
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+
+  .header-actions {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .header-actions .search-actions {
+    flex: 1 1 480px;
+    min-width: 0;
+  }
+}
+
+/* Nome muito longo no botão da conta termina com "…" em vez de empurrar o cabeçalho */
+.search-actions .login-btn.login-header-btn {
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Pagamento — EcoGeneration</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/compra.css">
+  <link rel="icon" href="/imagens/favicon2.png" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2e7d32">
+  <!-- simple-notify para Flash Messages -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <%
+    const brl = (valor) => Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const pago = pedido.status_pedido === 'pago';
+    const cancelado = pedido.status_pedido === 'cancelado';
+    const recusado = !pago && !cancelado && pedido.status_pagamento === 'rejected';
+    const emAnalise = !pago && !cancelado && ['pending', 'in_process'].includes(pedido.status_pagamento);
+    const situacao = pago ? { titulo: 'Pagamento aprovado!', texto: 'Recebemos o seu pagamento. Obrigado por escolher energia limpa!', cor: '#2e7d32', fundo: '#e8f5e9' }
+      : cancelado ? { titulo: 'Pedido cancelado', texto: 'O pagamento não foi concluído e os produtos voltaram para a loja.', cor: '#b71c1c', fundo: '#ffebee' }
+      : recusado ? { titulo: 'Pagamento recusado', texto: 'O pagamento não foi aprovado. Você pode tentar de novo com outra forma de pagamento.', cor: '#b71c1c', fundo: '#ffebee' }
+      : emAnalise ? { titulo: 'Pagamento em análise', texto: 'Assim que o Mercado Pago confirmar, o status do pedido é atualizado em "Meus pedidos".', cor: '#7a4f00', fundo: '#fff8e1' }
+      : { titulo: 'Pagamento não concluído', texto: 'Seu pedido está reservado por alguns minutos. Você pode concluir o pagamento agora.', cor: '#7a4f00', fundo: '#fff8e1' };
+  %>
+
+  <main class="sucesso-container" id="conteudo-principal">
+    <article class="sucesso-card">
+
+      <figure class="sucesso-icone" aria-hidden="true">
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="40" fill="<%= situacao.fundo %>"/>
+          <% if (pago) { %>
+            <path d="M24 40l12 12 20-24" stroke="<%= situacao.cor %>" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <% } else if (cancelado || recusado) { %>
+            <path d="M28 28l24 24M52 28L28 52" stroke="<%= situacao.cor %>" stroke-width="4" stroke-linecap="round"/>
+          <% } else { %>
+            <path d="M40 24v18l10 8" stroke="<%= situacao.cor %>" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <% } %>
+        </svg>
+      </figure>
+
+      <h1><%= situacao.titulo %></h1>
+      <p class="sucesso-subtitulo"><%= situacao.texto %></p>
+
+      <section class="sucesso-detalhes" aria-label="Detalhes do pedido">
+        <p><strong>Pedido:</strong> #<%= pedido.id_pedido %></p>
+        <% pedido.itens.forEach(function(item) { %>
+          <p><%= item.nome_produto %> — <%= brl(item.preco_unitario) %></p>
+        <% }) %>
+        <p><strong>Total:</strong> <%= brl(pedido.total_pedido) %></p>
+      </section>
+
+      <nav class="sucesso-acoes" aria-label="Próximas ações">
+        <% if (linkPagar) { %>
+          <a href="<%= linkPagar %>" class="btn-perfil">Concluir pagamento</a>
+        <% } %>
+        <a href="/perfil#minhas-compras" class="<%= linkPagar ? 'btn-loja' : 'btn-perfil' %>">Ver meus pedidos</a>
+        <% if (!linkPagar) { %><a href="/ecoloja" class="btn-loja">Continuar comprando</a><% } %>
+      </nav>
+
+    </article>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <!-- simple-notify JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>
+  <!-- Função centralizada de notificações -->
+  <script src="/js/notify.js"></script>
+  <!-- Flash Message -->
+  <%- include('../partials/flash') %>
+</body>
+</html>

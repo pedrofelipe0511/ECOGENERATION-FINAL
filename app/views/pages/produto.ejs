@@ -97,13 +97,11 @@
 
         <nav class="produto-detalhe-acoes" aria-label="Ações do produto">
           <% if (produto.estoque_produto > 0) { %>
-            <a
-              href="/confirmar-compra/<%= produto.id_produto %>"
-              class="btn-comprar-detalhe"
-              aria-label="Comprar <%= produto.nome_produto %> por R$ <%= produto.preco_produto %>"
-            >
-              Comprar agora
-            </a>
+            <form action="/carrinho/adicionar" method="POST" class="produto-form-carrinho">
+              <input type="hidden" name="id" value="<%= produto.id_produto %>">
+              <button type="submit" name="ir" value="carrinho" class="btn-comprar-detalhe">Comprar agora</button>
+              <button type="submit" class="btn-adicionar-carrinho">Adicionar ao carrinho</button>
+            </form>
           <% } else { %>
             <button class="btn-comprar-detalhe disabled" disabled aria-disabled="true">
               Indisponível

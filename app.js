@@ -51,6 +51,8 @@ app.use((req, res, next) => {
   res.locals.usuarioLogado = req.session && req.session.usuarioLogado;
   res.locals.usuarioNome = req.session && req.session.usuarioNome || '';
   res.locals.adminLoggedIn = req.session && req.session.adminLoggedIn;
+  // Quantidade de itens do carrinho, para o ícone no cabeçalho
+  res.locals.qtdeCarrinho = ((req.session && req.session.carrinho) || []).reduce((total, item) => total + item.qtde, 0);
   next();
 });
 
@@ -79,6 +81,17 @@ app.use((erro, req, res, next) => {
     mensagem: 'Não foi possível concluir sua solicitação agora. Tente novamente em instantes.'
   });
 });
+
+// ===== PEDIDOS ABANDONADOS =====
+// A cobrança do Mercado Pago expira em 30 min; após 60 min sem pagamento o
+// pedido é cancelado e o estoque reservado volta para a loja.
+const { pedidosModel } = require('./app/models/pedidosModel');
+const cancelarPedidosAbandonados = () => pedidosModel.cancelarExpirados(60)
+  .then((n) => { if (n) console.log(`${n} pedido(s) abandonado(s) cancelado(s); estoque devolvido.`); })
+  .catch((erro) => console.log('Erro ao cancelar pedidos abandonados:', erro.message));
+// Roda ao iniciar (o servidor pode ter ficado desligado) e depois a cada 10 min
+setTimeout(cancelarPedidosAbandonados, 5000).unref();
+setInterval(cancelarPedidosAbandonados, 10 * 60 * 1000).unref();
 
 const porta = process.env.APP_PORT || 3000;
 app.listen(porta, (erro) => {

@@ -20,6 +20,8 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
+    .badge-aguardando_pagamento { background: #fff8e1; color: #8a5a00; }
+    .badge-pago        { background: #e8f5e9; color: #1b5e20; }
     .badge-confirmado  { background: #e8f5e9; color: #2e7d32; }
     .badge-enviado     { background: #e3f2fd; color: #1565c0; }
     .badge-entregue    { background: #f3e5f5; color: #6a1b9a; }
@@ -78,38 +80,50 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Produto</th>
+              <th>Pedido</th>
+              <th>Itens</th>
               <th>Cliente</th>
-              <th>Email</th>
-              <th>Valor</th>
+              <th>Total</th>
+              <th>Pagamento</th>
               <th>Status</th>
-              <th>Alterar Status</th>
+              <th>Alterar status</th>
             </tr>
           </thead>
           <tbody>
             <% pedidos.forEach(pedido => { %>
               <tr>
-                <td>#<%= pedido.id_compra %></td>
-                <td style="display:flex; align-items:center; gap:0.6rem;">
-                  <img src="/imagens/<%= pedido.imagem_produto %>" alt="<%= pedido.nome_produto %>" class="produto-thumb">
-                  <%= pedido.nome_produto %>
-                </td>
-                <td><%= pedido.nome_usuario || 'Visitante' %></td>
-                <td><%= pedido.email_usuario || '—' %></td>
-                <td>R$ <%= parseFloat(pedido.preco_produto).toFixed(2) %></td>
                 <td>
-                  <span class="badge badge-<%= pedido.status_compra %>">
-                    <%= pedido.status_compra %>
+                  #<%= pedido.id_pedido %>
+                  <small style="display:block; color:#555;"><%= pedido.data_pedido ? new Date(pedido.data_pedido).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : 'data não registrada' %></small>
+                </td>
+                <td>
+                  <% pedido.itens.forEach(item => { %>
+                    <span style="display:flex; align-items:center; gap:0.5rem; margin:2px 0;">
+                      <img src="/imagens/<%= item.imagem_produto %>" alt="" class="produto-thumb">
+                      <%= item.nome_produto %>
+                    </span>
+                  <% }) %>
+                </td>
+                <td>
+                  <%= pedido.nome_usuario || 'Visitante' %>
+                  <small style="display:block; color:#555;"><%= pedido.email_usuario || '' %></small>
+                </td>
+                <td>R$ <%= Number(pedido.total_pedido).toFixed(2).replace('.', ',') %></td>
+                <td>
+                  <%= rotuloPagamento[pedido.status_pagamento] || pedido.status_pagamento %>
+                  <% if (pedido.id_pagamento) { %><small style="display:block; color:#555;">ID <%= pedido.id_pagamento %></small><% } %>
+                </td>
+                <td>
+                  <span class="badge badge-<%= pedido.status_pedido %>">
+                    <%= rotuloStatus[pedido.status_pedido] || pedido.status_pedido %>
                   </span>
                 </td>
                 <td>
-                  <form method="POST" action="/admin/pedidos/<%= pedido.id_compra %>/status" class="status-form">
-                    <select name="status">
-                      <option value="confirmado"  <%= pedido.status_compra === 'confirmado'  ? 'selected' : '' %>>Confirmado</option>
-                      <option value="enviado"     <%= pedido.status_compra === 'enviado'     ? 'selected' : '' %>>Enviado</option>
-                      <option value="entregue"    <%= pedido.status_compra === 'entregue'    ? 'selected' : '' %>>Entregue</option>
-                      <option value="cancelado"   <%= pedido.status_compra === 'cancelado'   ? 'selected' : '' %>>Cancelado</option>
+                  <form method="POST" action="/admin/pedidos/<%= pedido.id_pedido %>/status" class="status-form">
+                    <select name="status" aria-label="Novo status do pedido #<%= pedido.id_pedido %>">
+                      <% statusPedido.forEach(st => { %>
+                        <option value="<%= st %>" <%= pedido.status_pedido === st ? 'selected' : '' %>><%= rotuloStatus[st] %></option>
+                      <% }) %>
                     </select>
                     <button type="submit">Salvar</button>
                   </form>

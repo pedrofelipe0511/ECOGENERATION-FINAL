@@ -1,7 +1,7 @@
 footer.site-footer {
   background-color: #2e7d32;
   color: white;
-  padding: 40px 20px 20px;
+  padding: 40px var(--margem-lateral, 20px) 20px;
   margin-top: 40px;
   font-size: 0.95rem;
 }
@@ -31,7 +31,7 @@ footer.site-footer a:hover {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 30px;
-  max-width: 1180px;
+  max-width: var(--largura-conteudo, 1100px);
   margin: 0 auto;
   align-items: flex-start;
 }
@@ -83,6 +83,9 @@ footer.site-footer a:hover {
 }
 
 .footer-bottom {
+  max-width: var(--largura-conteudo, 1100px); /* a linha acompanha a grade */
+  margin-left: auto;
+  margin-right: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   margin-top: 30px;
   padding-top: 16px;
@@ -93,6 +96,22 @@ footer.site-footer a:hover {
   margin: 0;
   font-size: 0.9rem;
   color: #e8f5e9;
+}
+
+/* Desktop: marca encostada à esquerda e links à direita, nas bordas da grade */
+@media (min-width: 861px) {
+  footer.site-footer .footer-brand {
+    text-align: left;
+  }
+
+  footer.site-footer .footer-links {
+    justify-content: flex-end;
+  }
+
+  footer.site-footer .footer-section {
+    min-width: 0;
+    text-align: left;
+  }
 }
 
 @media (max-width: 860px) {
@@ -112,7 +131,7 @@ footer.site-footer a:hover {
 
 @media (max-width: 620px) {
   footer.site-footer {
-    padding: 30px 16px 18px;
+    padding: 30px var(--margem-lateral, 16px) 18px;
   }
 
   .footer-container {
@@ -120,17 +139,23 @@ footer.site-footer a:hover {
     align-items: center;
   }
 
+  /* Em coluna, o flex-basis viraria altura: os blocos ficam do tamanho do conteúdo */
   .footer-brand,
   .footer-links {
+    flex: none;
     width: 100%;
   }
 
+  /* "Explore" e "Atendimento" lado a lado */
   .footer-links {
-    gap: 24px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 16px;
   }
 
   .footer-section {
-    width: 100%;
+    flex: 1 1 0;
+    min-width: 0;
   }
 }
 

@@ -35,8 +35,8 @@ exports.loginSubmit = async (req, res, next) => {
   }
 
   try {
-    // Novo id de sessão no login (mantém o login de usuário comum, se houver)
-    await regenerarSessao(req, CHAVES_USUARIO);
+    // Novo id de sessão no login (mantém o login de usuário comum e o carrinho)
+    await regenerarSessao(req, [...CHAVES_USUARIO, 'carrinho']);
     req.session.adminLoggedIn = true;
     req.session.adminUser = usuario;
     req.session.flash = { status: 'success', text: 'Login administrativo realizado com sucesso!' };

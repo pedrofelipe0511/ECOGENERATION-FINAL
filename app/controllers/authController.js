@@ -99,8 +99,9 @@ exports.loginSubmit = async (req, res) => {
             return res.render('login', { errors: { geral: { msg } }, old: req.body });
         }
 
-        // Novo id de sessão a cada login (evita fixação de sessão)
-        await regenerarSessao(req, CHAVES_ADMIN);
+        // Novo id de sessão a cada login (evita fixação de sessão),
+        // mantendo o carrinho montado antes de entrar
+        await regenerarSessao(req, [...CHAVES_ADMIN, 'carrinho']);
         req.session.usuarioLogado = true;
         req.session.usuarioId = usuario.id_usuario;
         req.session.usuarioNome = usuario.nome_usuario;

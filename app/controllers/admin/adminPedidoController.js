@@ -1,15 +1,12 @@
 const { validationResult } = require('express-validator');
-const { comprasModel } = require("../../models/comprasModel");
-
-// Status que um pedido pode assumir (os mesmos do <select> da tela de pedidos)
-const STATUS_PEDIDO = ['confirmado', 'enviado', 'entregue', 'cancelado'];
+const { pedidosModel, STATUS_PEDIDO, ROTULO_STATUS, ROTULO_PAGAMENTO } = require("../../models/pedidosModel");
 
 exports.STATUS_PEDIDO = STATUS_PEDIDO;
 
 exports.listar = async (req, res) => {
   try {
-    const pedidos = await comprasModel.findAll();
-    res.render('admin-pedidos', { titulo: 'Gerenciar Pedidos', pedidos });
+    const pedidos = await pedidosModel.findAll();
+    res.render('admin-pedidos', { titulo: 'Gerenciar Pedidos', pedidos, statusPedido: STATUS_PEDIDO, rotuloStatus: ROTULO_STATUS, rotuloPagamento: ROTULO_PAGAMENTO });
   } catch (erro) {
     console.log(erro);
     res.redirect('/admin');
@@ -24,8 +21,8 @@ exports.atualizarStatus = async (req, res) => {
   }
   try {
     const { status } = req.body;
-    await comprasModel.updateStatus(req.params.id, status);
-    req.session.flash = { status: 'success', text: `Status do pedido #${req.params.id} atualizado para "${status}".` };
+    await pedidosModel.atualizarStatus(req.params.id, status);
+    req.session.flash = { status: 'success', text: `Status do pedido #${req.params.id} atualizado para "${ROTULO_STATUS[status]}".` };
     res.redirect('/admin/pedidos');
   } catch (erro) {
     console.log(erro);

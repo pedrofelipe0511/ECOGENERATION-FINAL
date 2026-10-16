@@ -19,6 +19,15 @@
   --sombra:       0 2px 12px rgba(0,0,0,0.08);
   --sombra-media: 0 6px 24px rgba(0,0,0,0.12);
   --fonte:        'Segoe UI', Arial, sans-serif;
+  /* Grade da página: todos os blocos usam a mesma largura e a mesma margem
+     lateral, para as bordas ficarem alinhadas de cima a baixo */
+  --largura-conteudo: 1100px;
+  --margem-lateral:   20px;
+  --largura-bloco:    min(var(--largura-conteudo), 100% - 2 * var(--margem-lateral));
+}
+
+@media (max-width: 600px) {
+  :root { --margem-lateral: 16px; }
 }
 
 /* ── RESET ── */
@@ -51,8 +60,7 @@ p  { color: var(--texto-suave); }
 .hero-carousel {
   position: relative;
   overflow: hidden;
-  width: calc(100% - 40px);
-  max-width: 1200px;
+  width: var(--largura-bloco);
   margin: 20px auto 48px;
   border-radius: 20px;
 }
@@ -209,8 +217,7 @@ p  { color: var(--texto-suave); }
 
 /* ── SEÇÃO: POR QUE ECOGENERATION ── */
 .why-ecogeneration {
-  width: calc(100% - 40px);
-  max-width: 1200px;
+  width: var(--largura-bloco);
   margin: 0 auto 60px;
   padding: 0;
   text-align: center;
@@ -283,7 +290,7 @@ p  { color: var(--texto-suave); }
 /* ── SEÇÃO: COMO FUNCIONA ── */
 .como-funciona {
   background: linear-gradient(135deg, var(--verde) 0%, #1b5e20 100%);
-  padding: 64px 20px;
+  padding: 64px var(--margem-lateral);
   text-align: center;
   margin-bottom: 60px;
 }
@@ -303,7 +310,7 @@ p  { color: var(--texto-suave); }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  max-width: 900px;
+  max-width: var(--largura-conteudo);
   margin: 0 auto 36px;
 }
 
@@ -371,9 +378,9 @@ p  { color: var(--texto-suave); }
 
 /* ── PRODUTOS EM DESTAQUE ── */
 .produtos-destaque-section {
-  max-width: 1100px;
+  width: var(--largura-bloco);
   margin: 0 auto 60px;
-  padding: 0 20px;
+  padding: 0;
   text-align: center;
 }
 
@@ -528,7 +535,7 @@ footer {
 
 @media (max-width: 600px) {
   .hero-carousel,
-  .why-ecogeneration { width: calc(100% - 24px); margin: 12px auto 32px; }
+  .why-ecogeneration { margin: 12px auto 32px; }
   .cards-container,
   .passos-grid,
   .produtos-grid-home { grid-template-columns: 1fr 1fr; }
