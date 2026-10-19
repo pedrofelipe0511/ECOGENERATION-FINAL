@@ -239,9 +239,28 @@
 
 .container-pagamento p { margin-bottom: 0.6rem; color: #333333; }
 
-#button-checkout {
+/* Botão que leva à página de pagamento do Mercado Pago (cores da marca) */
+.btn-mercadopago {
+  display: block;
   max-width: 420px;
-  margin-bottom: 0.9rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: 10px;
+  background: #ffe600;
+  color: #0a0a52;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-mercadopago:hover,
+.btn-mercadopago:focus-visible { background: #f5d800; color: #0a0a52; }
+
+.container-pagamento .carrinho-aviso-redirecionamento {
+  margin: 0.5rem 0 0.9rem;
+  font-size: 0.85rem;
+  color: #555555;
 }
 
 .carrinho-continuar {
@@ -267,6 +286,7 @@
 [data-theme="dark"] .carrinho-endereco,
 [data-theme="dark"] .carrinho-aviso-pagamento,
 [data-theme="dark"] .container-pagamento p,
+[data-theme="dark"] .container-pagamento .carrinho-aviso-redirecionamento,
 [data-theme="dark"] .carrinho-vazio p,
 [data-theme="dark"] .carrinho-login p { color: #d6d6d6; }
 [data-theme="dark"] .carrinho-secao-topo a,
@@ -321,4 +341,5 @@
   [data-theme="dark"] .carrinho-tabela td[data-rotulo]:not(.carrinho-produto)::before { color: #bdbdbd; }
 
   .btn-carrinho-principal { width: 100%; }
+  .btn-mercadopago { max-width: none; }
 }

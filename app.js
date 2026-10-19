@@ -11,6 +11,13 @@ if (variaveisAusentes.length > 0) {
   process.exit(1);
 }
 
+// APP_BASE_URL vai nos links de e-mail e nos retornos do Mercado Pago:
+// um erro de digitação (ex.: "ttps://") quebra a volta do pagamento
+const baseUrl = process.env.APP_BASE_URL;
+if (baseUrl && !/^https?:\/\/[^\s/]+/.test(baseUrl)) {
+  console.error(`APP_BASE_URL inválida: "${baseUrl}". Use algo como https://seu-site.onrender.com`);
+}
+
 const pool = require("./config/pool_conexoes");
 const session = require("express-session");
 const app = express();
@@ -53,6 +60,9 @@ app.use((req, res, next) => {
   res.locals.adminLoggedIn = req.session && req.session.adminLoggedIn;
   // Quantidade de itens do carrinho, para o ícone no cabeçalho
   res.locals.qtdeCarrinho = ((req.session && req.session.carrinho) || []).reduce((total, item) => total + item.qtde, 0);
+  // Formatação usada nas telas: "R$ 1.299,90" e o nome da categoria com acento
+  res.locals.formatarPreco = (valor) => Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  res.locals.rotuloCategoria = (categoria) => ({ entrada: 'Entrada', medio: 'Médio', avancado: 'Avançado' })[categoria] || categoria;
   next();
 });
 

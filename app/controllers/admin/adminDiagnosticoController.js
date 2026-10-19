@@ -1,10 +1,11 @@
+const { ROTULOS } = require('../../models/diagnosticoRegras');
 const { validationResult } = require('express-validator');
 const { adminModel } = require("../../models/adminModel");
 
 exports.listar = async (req, res) => {
   try {
     const diagnosticos = await adminModel.getAllDiagnosticos();
-    res.render('admin-diagnosticos', { titulo: 'Gerenciar Diagnósticos', diagnosticos });
+    res.render('admin-diagnosticos', { titulo: 'Gerenciar Diagnósticos', diagnosticos, rotulosNivel: ROTULOS.nivel });
   } catch (erro) {
     console.log(erro);
     res.redirect('/admin');

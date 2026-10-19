@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const { usuariosModel, STATUS_USUARIO } = require("../models/usuariosModel");
 const { criarToken, verificarToken, impressaoSenha, getBaseUrl } = require('../helpers/tokens');
 const { regenerarSessao, salvarSessao, CHAVES_ADMIN } = require('../helpers/sessao');
+const { carrinho } = require('../models/carrinho');
 const { enviarEmail, criarTemplateAtivacaoConta, criarTemplateResetSenha } = require('../services/emailService');
 
 // Hash usado quando o e-mail não existe: o bcrypt.compare roda do mesmo jeito,
@@ -105,6 +106,12 @@ exports.loginSubmit = async (req, res) => {
         req.session.usuarioLogado = true;
         req.session.usuarioId = usuario.id_usuario;
         req.session.usuarioNome = usuario.nome_usuario;
+        // Junta o carrinho montado antes de entrar com o salvo na conta
+        try {
+            await carrinho.mesclarComConta(req.session);
+        } catch (erroCarrinho) {
+            console.log('Erro ao recuperar o carrinho salvo:', erroCarrinho.message);
+        }
         req.session.flash = { status: 'success', text: `Bem-vindo(a) de volta, ${usuario.nome_usuario.split(' ')[0]}!` };
         await salvarSessao(req);
         res.redirect('/');

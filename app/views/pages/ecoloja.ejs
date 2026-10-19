@@ -80,8 +80,8 @@
               <h2 class="produto-nome"><%= produto.nome_produto %></h2>
               <p class="produto-desc"><%= produto.descricao_produto %></p>
               <footer class="produto-rodape">
-                <strong class="produto-preco" aria-label="Preço: R$ <%= produto.preco_produto %>">
-                  R$ <%= produto.preco_produto %>
+                <strong class="produto-preco">
+                  <%= formatarPreco(produto.preco_produto) %>
                 </strong>
                 <a
                   href="/produto/<%= produto.id_produto %>"

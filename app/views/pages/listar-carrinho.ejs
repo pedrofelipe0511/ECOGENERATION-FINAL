@@ -13,8 +13,6 @@
   <meta name="theme-color" content="#2e7d32">
   <!-- simple-notify para Flash Messages -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
-  <!-- SDK do Mercado Pago: mostra o botão de pagamento (Wallet Brick) -->
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
   <%- include('../partials/header') %>
@@ -114,7 +112,7 @@
         </section>
 
         <!-- Finalizar: cria a preferência e mostra o botão do Mercado Pago -->
-        <section class="carrinho-secao" id="area-checkout" data-public-key="<%= publicKey %>" aria-labelledby="titulo-pagamento">
+        <section class="carrinho-secao" id="area-checkout" aria-labelledby="titulo-pagamento">
           <h2 id="titulo-pagamento">Pagamento</h2>
           <p class="carrinho-aviso-pagamento">O pagamento é feito no ambiente seguro do <strong>Mercado Pago</strong> (PIX, cartão ou boleto). Os produtos ficam reservados por 30 minutos enquanto você paga.</p>
           <p id="checkout-erro" class="carrinho-erro" role="alert" hidden></p>
@@ -123,7 +121,8 @@
 
           <section id="container-pagamento" class="container-pagamento" hidden aria-live="polite">
             <p>Tudo pronto! Clique no botão abaixo para pagar <strong><%= brl(total) %></strong>:</p>
-            <div id="button-checkout"></div>
+            <a id="link-pagamento" class="btn-mercadopago" href="#">Pagar com Mercado Pago</a>
+            <p class="carrinho-aviso-redirecionamento">Você será levado ao site do Mercado Pago para concluir o pagamento.</p>
             <button type="button" id="go-back" class="btn-carrinho-secundario">← Voltar ao carrinho</button>
           </section>
         </section>

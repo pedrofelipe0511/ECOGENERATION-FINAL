@@ -156,7 +156,7 @@
               <li class="cobertura <%= item.status %>">
                 <span class="cobertura-status" aria-hidden="true"><%= marcador[item.status].simbolo %></span>
                 <span class="visually-hidden"><%= marcador[item.status].texto %>:</span>
-                <span class="cobertura-texto"><span aria-hidden="true"><%= item.icone %></span> <strong><%= item.nome %></strong>: <%= item.frase %></span>
+                <span class="cobertura-texto"><strong><%= item.nome %></strong>: <%= item.frase %></span>
               </li>
             <% }); %>
           </ul>

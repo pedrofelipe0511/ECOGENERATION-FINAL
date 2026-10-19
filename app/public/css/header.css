@@ -329,11 +329,12 @@ header:where(.site-header) {
   }
 }
 /* ── DARK MODE ──────────────────────────────────────────── */
-[data-theme="dark"] header {
+[data-theme="dark"] header.site-header {
   background-color: #0d1f0d;
   box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 [data-theme="dark"] .nav-categorias li a { color: #7fcf80; }
+[data-theme="dark"] .nav-categorias li.active a { color: #ffffff; }
 [data-theme="dark"] .nav-categorias.open { background: #0d1f0d; }
 [data-theme="dark"] .search-form input  { background: #1a2a1a; color: #d4e8d4; border-color: #2a4a2a; }
 [data-theme="dark"] .login-btn          { background: #256029; }

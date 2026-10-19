@@ -4,13 +4,9 @@
   padding: 2rem 1rem;
 }
 
-.produto-detalhe-header{
-  background-color: #f9f9f9; /* leve fundo claro, combina com login */
-}
-
 .produto-breadcrumb {
   font-size: 0.9rem;
-  color: #fff;
+  color: #555555;
   margin-bottom: 1.5rem;
 }
 
@@ -237,9 +233,9 @@
   color: #c3c3c3;
 }
 
+/* A etiqueta da categoria continua clara (texto verde-escuro) também no modo escuro */
 [data-theme="dark"] .produto-detalhe-categoria {
-  color: #a5f3fc;
-  background: rgba(255,255,255,0.05);
+  background: #e8f5e9;
 }
 
 [data-theme="dark"] .badge-estoque.disponivel {

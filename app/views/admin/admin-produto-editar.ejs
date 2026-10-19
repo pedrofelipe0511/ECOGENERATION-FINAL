@@ -18,26 +18,26 @@
     
     <nav class="admin-nav">
       <a href="/admin" class="nav-item">
-        📊 Dashboard
+        Dashboard
       </a>
       <a href="/admin/usuarios" class="nav-item">
-        👥 Usuários
+        Usuários
       </a>
       <a href="/admin/diagnosticos" class="nav-item">
-        📋 Diagnósticos
+        Diagnósticos
       </a>
       <a href="/admin/produtos" class="nav-item active">
-        📦 Produtos
+        Produtos
       </a>
       <a href="/admin-logout" class="nav-item nav-logout">
-        🚪 Sair
+        Sair
       </a>
     </nav>
   </aside>
   
   <main class="admin-main">
     <header class="admin-header">
-      <h1><%= isNovo ? '➕ Novo Produto' : '✏️ Editar Produto' %></h1>
+      <h1><%= isNovo ? 'Novo Produto' : 'Editar Produto' %></h1>
     </header>
     
     <section class="form-container">
@@ -164,10 +164,10 @@
         
         <footer class="form-actions">
           <button type="submit" class="btn btn-primary">
-            <%= isNovo ? '✅ Criar Produto' : '✅ Salvar Alterações' %>
+            <%= isNovo ? 'Criar Produto' : 'Salvar Alterações' %>
           </button>
           <a href="/admin/produtos" class="btn btn-secondary">
-            ❌ Voltar
+            Voltar
           </a>
         </footer>
       </form>

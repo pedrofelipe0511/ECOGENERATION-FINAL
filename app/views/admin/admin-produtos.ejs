@@ -18,32 +18,32 @@
     
     <nav class="admin-nav">
       <a href="/admin" class="nav-item">
-        📊 Dashboard
+        Dashboard
       </a>
       <a href="/admin/usuarios" class="nav-item">
-        👥 Usuários
+        Usuários
       </a>
       <a href="/admin/diagnosticos" class="nav-item">
-        📋 Diagnósticos
+        Diagnósticos
       </a>
       <a href="/admin/produtos" class="nav-item active">
-        📦 Produtos
+        Produtos
       </a>
       <a href="/admin/pedidos" class="nav-item">
-        🛒 Pedidos
+        Pedidos
       </a>
       <a href="/admin-logout" class="nav-item nav-logout">
-        🚪 Sair
+        Sair
       </a>
     </nav>
   </aside>
   
   <main class="admin-main">
     <header class="admin-header">
-      <h1>📦 Catálogo de Produtos</h1>
+      <h1>Catálogo de Produtos</h1>
       <p>Total de produtos: <strong><%= produtos.length %></strong></p>
       <a href="/admin/produtos/novo" class="btn btn-primary" style="float: right;">
-        ➕ Novo Produto
+        Novo Produto
       </a>
     </header>
     
@@ -65,8 +65,8 @@
               <tr class="<%= produto.estoque_produto <= 5 ? 'low-stock' : '' %>">
                 <td>#<%= produto.id_produto %></td>
                 <td><%= produto.nome_produto %></td>
-                <td><span class="badge"><%= produto.categoria_produto %></span></td>
-                <td>R$ <%= parseFloat(produto.preco_produto).toFixed(2) %></td>
+                <td><span class="badge"><%= rotuloCategoria(produto.categoria_produto) %></span></td>
+                <td><%= formatarPreco(produto.preco_produto) %></td>
                 <td>
                   <span class="stock-badge <%= produto.estoque_produto <= 5 ? 'critical' : '' %>">
                     <%= produto.estoque_produto %> un.
@@ -74,11 +74,11 @@
                 </td>
                 <td>
                   <a href="/admin/produtos/<%= produto.id_produto %>/editar" class="btn btn-tiny btn-info">
-                    ✏️ Editar
+                    Editar
                   </a>
                   <form method="POST" action="/admin/produtos/<%= produto.id_produto %>/deletar" class="form-inline"
                         onsubmit="return confirm('Tem certeza que deseja deletar este produto?')">
-                    <button type="submit" class="btn btn-tiny btn-danger">🗑️ Deletar</button>
+                    <button type="submit" class="btn btn-tiny btn-danger">Deletar</button>
                   </form>
                 </td>
               </tr>
@@ -88,7 +88,7 @@
       </section>
     <% } else { %>
       <section class="empty-state">
-        <p>📭 Nenhum produto cadastrado ainda</p>
+        <p>Nenhum produto cadastrado ainda</p>
         <a href="/admin/produtos/novo" class="btn btn-primary">Criar Primeiro Produto</a>
       </section>
     <% } %>

@@ -30,8 +30,7 @@ exports.listar = async (req, res) => {
             itens,
             total,
             avisos,
-            entrega,
-            publicKey: process.env.MP_PUBLIC_KEY || '' // chave PÚBLICA: pode ir para o navegador
+            entrega
         });
     } catch (erro) {
         console.log(erro);
@@ -80,16 +79,26 @@ exports.adicionarKit = async (req, res) => {
 };
 
 // ===== DIMINUIR 1 UNIDADE =====
-exports.diminuir = (req, res) => {
-    if (validationResult(req).isEmpty()) carrinho.removeItem(req.session, req.body.id, 1);
+exports.diminuir = async (req, res) => {
+    try {
+        if (validationResult(req).isEmpty()) await carrinho.removeItem(req.session, req.body.id, 1);
+    } catch (erro) {
+        console.log(erro);
+        avisar(req, 'error', 'Não foi possível alterar o carrinho agora.');
+    }
     voltar(req, res);
 };
 
 // ===== REMOVER O ITEM INTEIRO =====
-exports.remover = (req, res) => {
-    if (validationResult(req).isEmpty()) {
-        carrinho.excluirItem(req.session, req.body.id);
-        avisar(req, 'success', 'Item removido do carrinho.');
+exports.remover = async (req, res) => {
+    try {
+        if (validationResult(req).isEmpty()) {
+            await carrinho.excluirItem(req.session, req.body.id);
+            avisar(req, 'success', 'Item removido do carrinho.');
+        }
+    } catch (erro) {
+        console.log(erro);
+        avisar(req, 'error', 'Não foi possível alterar o carrinho agora.');
     }
     voltar(req, res);
 };

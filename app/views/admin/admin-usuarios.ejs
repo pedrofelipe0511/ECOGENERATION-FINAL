@@ -49,29 +49,29 @@
     
     <nav class="admin-nav">
       <a href="/admin" class="nav-item">
-        📊 Dashboard
+        Dashboard
       </a>
       <a href="/admin/usuarios" class="nav-item active">
-        👥 Usuários
+        Usuários
       </a>
       <a href="/admin/diagnosticos" class="nav-item">
-        📋 Diagnósticos
+        Diagnósticos
       </a>
       <a href="/admin/produtos" class="nav-item">
-        📦 Produtos
+        Produtos
       </a>
       <a href="/admin/pedidos" class="nav-item">
-        🛒 Pedidos
+        Pedidos
       </a>
       <a href="/admin-logout" class="nav-item nav-logout">
-        🚪 Sair
+        Sair
       </a>
     </nav>
   </aside>
   
   <main class="admin-main">
     <header class="admin-header">
-      <h1>👥 Gerenciamento de Usuários</h1>
+      <h1>Gerenciamento de Usuários</h1>
       <p>Total de usuários cadastrados: <strong><%= usuarios.length %></strong></p>
     </header>
     
@@ -97,7 +97,7 @@
                 <td>
                   <form method="POST" action="/admin/usuarios/deletar/<%= usuario.id_usuario %>" class="form-inline"
                         onsubmit="return confirm('Tem certeza que deseja deletar este usuário?')">
-                    <button type="submit" class="btn btn-tiny btn-danger">🗑️ Deletar</button>
+                    <button type="submit" class="btn btn-tiny btn-danger">Deletar</button>
                   </form>
                 </td>
               </tr>
@@ -107,13 +107,13 @@
       </section>
     <% } else { %>
       <section class="empty-state">
-        <p>📭 Nenhum usuário cadastrado ainda</p>
+        <p>Nenhum usuário cadastrado ainda</p>
         <a href="/cadastro" class="btn btn-primary">Criar Primeiro Usuário</a>
       </section>
     <% } %>
 
     <section class="admin-header" style="margin-top:2rem;">
-      <h2>🛒 Últimos Pedidos</h2>
+      <h2>Últimos Pedidos</h2>
       <p>Total de pedidos cadastrados: <strong><%= (pedidos && pedidos.length) || 0 %></strong></p>
     </section>
 

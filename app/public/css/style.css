@@ -481,7 +481,7 @@ p  { color: var(--texto-suave); }
 }
 
 /* ── FOOTER ── */
-footer {
+footer:where(.site-footer) {
   width: 100%;
   padding: 20px;
   background: var(--verde);
@@ -513,11 +513,13 @@ footer {
 [data-theme="dark"] .hero-banner-blue  { background: linear-gradient(135deg, #0d1f2d 0%, #112233 100%); }
 [data-theme="dark"] .hero-copy h1       { color: #e5f7df; }
 [data-theme="dark"] .hero-copy h1 span  { color: #81c784; }
+[data-theme="dark"] .hero-label        { color: #1b5e20; }
+[data-theme="dark"] .hero-banner-blue .hero-label { color: #0d47a1; }
 [data-theme="dark"] .hero-carousel-button { background: rgba(30,30,30,0.9); color: #81c784; }
 [data-theme="dark"] .como-funciona      { background: linear-gradient(135deg, #1a1a1a 0%, #111 100%); }
 [data-theme="dark"] .passo-card         { background: rgba(255,255,255,0.05); }
 [data-theme="dark"] .btn-cta            { background: #2e7d32; color: #fff; }
-[data-theme="dark"] footer              { background: #1b1b1b; }
+[data-theme="dark"] footer:where(.site-footer)            { background: #1b1b1b; }
 
 /* ── RESPONSIVO ── */
 @media (max-width: 860px) {

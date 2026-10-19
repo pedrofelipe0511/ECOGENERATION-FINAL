@@ -197,9 +197,25 @@
 }
 
 .stat-icon {
-  font-size: 40px;
-  min-width: 60px;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: 14px;
+  background: #e3eef6;
+  color: #1f618d;
+}
+
+.stat-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.stat-card.warning .stat-icon {
+  background: #fff3e0;
+  color: #b45309;
 }
 
 .stat-content h3 {
@@ -321,6 +337,11 @@
   background: #e0e0e0;
   color: #333;
 }
+
+.badge-independente { background: #e8f5e9; color: #1b5e20; }
+.badge-preventivo { background: #e3f2fd; color: #0d47a1; }
+.badge-medio { background: #fff8e1; color: #8a4b00; }
+.badge-critico { background: #ffebee; color: #b71c1c; }
 
 .badge-alta {
   background: #d4edda;

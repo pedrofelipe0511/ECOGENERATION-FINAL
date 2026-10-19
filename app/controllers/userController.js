@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const { usuariosModel } = require("../models/usuariosModel");
 const { diagnosticosModel } = require("../models/diagnosticosModel");
 const { pedidosModel, ROTULO_STATUS, ROTULO_PAGAMENTO } = require("../models/pedidosModel");
+const { ROTULOS, rotular } = require("../models/diagnosticoRegras");
 const { regenerarSessao, salvarSessao, CHAVES_ADMIN } = require('../helpers/sessao');
 const { removerArquivo } = require('../helpers/imagens');
 const path = require('path');
@@ -48,6 +49,8 @@ exports.perfil = async (req, res) => {
             pedidos: paginaCompras.itens,
             rotuloStatus: ROTULO_STATUS,
             rotuloPagamento: ROTULO_PAGAMENTO,
+            rotulosDiagnostico: ROTULOS,
+            rotular,
             paginaCompras,
             paginaDiagnosticos,
             itensPorPagina: ITENS_POR_PAGINA,

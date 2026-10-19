@@ -69,7 +69,6 @@ const PRECISA_TOMADA = ['ventilador', 'wifi', 'notebook'];
 const ORDEM_APARELHOS = ['celular', 'luz', 'wifi', 'ventilador', 'notebook'];
 
 const NOME_APARELHO = { celular: 'Celular', luz: 'Luz de um cômodo', ventilador: 'Ventilador', wifi: 'Wi-Fi', notebook: 'Notebook' };
-const ICONE_APARELHO = { celular: '📱', luz: '💡', ventilador: '🌀', wifi: '📶', notebook: '💻' };
 
 const MAX_ITENS_KIT = 3;
 
@@ -133,7 +132,7 @@ const avaliarKit = (itens, aparelhos, duracao) => {
             const semTomada = PRECISA_TOMADA.includes(aparelho) && !itens.some((p) => p.tipo_energia === 'bateria');
             frase = semTomada ? 'precisa de uma estação de energia com tomada' : 'este kit não dá conta';
         }
-        return { aparelho, nome: NOME_APARELHO[aparelho], icone: ICONE_APARELHO[aparelho], status, frase, fracao };
+        return { aparelho, nome: NOME_APARELHO[aparelho], status, frase, fracao };
     });
 
     const total = itens.reduce((t, p) => t + Number(p.preco_produto), 0);
@@ -191,4 +190,35 @@ const montarKit = ({ aparelhos, duracao, orcamento }, produtos) => {
     return { kit, alternativa, teto, aparelhos: lista };
 };
 
-module.exports = { OPCOES, calcularDiagnostico, montarKit, NOME_APARELHO, ICONE_APARELHO };
+// ── TEXTOS PARA AS TELAS ───────────────────────────────────────
+// Os valores ficam gravados como códigos (ex.: "menos1h"); aqui viram frases.
+const ROTULOS = {
+    nivel: {
+        independente: 'Independente', medio: 'Médio', preventivo: 'Preventivo', critico: 'Crítico',
+        alta: 'Alta', media: 'Média', baixa: 'Baixa' // diagnósticos antigos
+    },
+    frequencia: {
+        nunca: 'Nunca falta', poucas: 'Raramente (1-2x por ano)', regularmente: 'Algumas vezes ao ano',
+        algumas: 'Toda semana', frequentemente: 'Quase todo dia'
+    },
+    duracao: { menos1h: 'Menos de 1 hora', '1a4h': 'Entre 1 e 4 horas', '4a12h': 'Entre 4 e 12 horas', mais12h: 'Mais de 12 horas' },
+    preparacao: {
+        sistema_completo: 'Sistema solar completo', gerador: 'Gerador', power_bank: 'Power bank',
+        lanternas: 'Lanterna ou vela', nenhuma: 'Nada'
+    },
+    aparelhos: NOME_APARELHO,
+    moradia: { casa_propria: 'Casa própria', apartamento: 'Apartamento', aluguel: 'Imóvel alugado', area_rural: 'Área rural' }
+};
+
+// Traduz um valor (ou uma lista "a, b") usando o mapa; o que não estiver
+// no mapa (respostas antigas) aparece só sem "_" e com inicial maiúscula.
+const rotular = (mapa, valor) => {
+    if (!valor) return '—';
+    return String(valor).split(',').map((v) => v.trim()).filter(Boolean).map((v) => {
+        if (mapa[v]) return mapa[v];
+        const texto = v.replace(/_/g, ' ');
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+    }).join(', ');
+};
+
+module.exports = { OPCOES, calcularDiagnostico, montarKit, NOME_APARELHO, ROTULOS, rotular };

@@ -1,5 +1,6 @@
 const { carrinho } = require('../models/carrinho');
 const { pedidosModel } = require('../models/pedidosModel');
+const { carrinhoSalvoModel } = require('../models/carrinhoSalvoModel');
 const { criarPreferencia, buscarPagamento, linkDaPreferencia } = require('../services/mercadoPagoService');
 
 // ── PREPARAR O PAGAMENTO ───────────────────────────────────────
@@ -18,7 +19,9 @@ const prepararPagamento = async (idUsuario, itensPedido) => {
         return { pedido, preferenceId: preferencia.id };
     } catch (erro) {
         // Sem preferência criada, o pedido não serve: cancela e devolve o estoque
-        console.log('Erro ao criar a preferência no Mercado Pago:', erro.message);
+        // O SDK devolve o erro da API (status e causa): ajuda a achar o motivo nos logs
+        console.log('Erro ao criar a preferência no Mercado Pago:', erro.message,
+            JSON.stringify({ status: erro.status, erro: erro.error, causa: erro.cause }));
         await pedidosModel.cancelarEDevolverEstoque(pedido.id_pedido);
         return { status: 503, erro: 'O pagamento está indisponível no momento. Tente novamente em instantes.' };
     }
@@ -50,7 +53,11 @@ exports.criarPreferencia = async (req, res) => {
         }
         const resultado = await pagamentosEmAndamento.get(chave);
         if (resultado.erro) return res.status(resultado.status).json({ erro: resultado.erro });
-        res.json({ preferenceId: resultado.preferenceId, pedido: resultado.pedido.id_pedido });
+        res.json({
+            preferenceId: resultado.preferenceId,
+            linkPagamento: linkDaPreferencia(resultado.preferenceId), // página de pagamento do Checkout Pro
+            pedido: resultado.pedido.id_pedido
+        });
     } catch (erro) {
         console.log(erro);
         res.status(500).json({ erro: 'Não foi possível iniciar o pagamento. Tente novamente.' });
@@ -68,7 +75,10 @@ const aplicarPagamento = async (pagamento) => {
             console.log(`Pagamento ${pagamento.id} com valor diferente do pedido #${pedido.id_pedido}`);
             return pedido;
         }
-        await pedidosModel.marcarPago(pedido.id_pedido, pagamento.id, pagamento.status);
+        const acabouDePagar = await pedidosModel.marcarPago(pedido.id_pedido, pagamento.id, pagamento.status);
+        // Compra paga: os produtos dela saem do carrinho salvo na conta
+        // (vale também quando a confirmação chega pelo aviso do Mercado Pago)
+        if (acabouDePagar) await carrinhoSalvoModel.removerItensDoPedido(pedido.id_pedido);
     } else if (['cancelled', 'refunded', 'charged_back'].includes(pagamento.status)) {
         await pedidosModel.cancelarEDevolverEstoque(pedido.id_pedido, pagamento.status, pagamento.id);
     } else {
@@ -96,7 +106,7 @@ exports.feedback = async (req, res) => {
 
         // Pagamento aprovado ou em análise: o pedido está feito, o carrinho esvazia
         if (pedido.status_pedido === 'pago' || ['pending', 'in_process'].includes(pedido.status_pagamento)) {
-            carrinho.esvaziar(req.session);
+            await carrinho.esvaziar(req.session);
             res.locals.qtdeCarrinho = 0; // o cabeçalho desta página já mostra o carrinho vazio
         }
 

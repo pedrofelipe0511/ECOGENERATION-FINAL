@@ -17,29 +17,29 @@
   <aside class="admin-sidebar">
     <nav class="admin-nav">
       <a href="/admin" class="nav-item">
-        📊 Dashboard
+        Dashboard
       </a>
       <a href="/admin/usuarios" class="nav-item">
-        👥 Usuários
+        Usuários
       </a>
       <a href="/admin/diagnosticos" class="nav-item active">
-        📋 Diagnósticos
+        Diagnósticos
       </a>
       <a href="/admin/produtos" class="nav-item">
-        📦 Produtos
+        Produtos
       </a>
       <a href="/admin/pedidos" class="nav-item">
-        🛒 Pedidos
+        Pedidos
       </a>
       <a href="/admin-logout" class="nav-item nav-logout">
-        🚪 Sair
+        Sair
       </a>
     </nav>
   </aside>
   
   <main class="admin-main">
     <header class="admin-header">
-      <h1>📋 Gerenciamento de Diagnósticos</h1>
+      <h1>Gerenciamento de Diagnósticos</h1>
       <p>Total de diagnósticos realizados: <strong><%= diagnosticos.length %></strong></p>
     </header>
     
@@ -51,8 +51,7 @@
               <th>ID</th>
               <th>Usuário</th>
               <th>Email</th>
-              <th>Nível de Autonomia</th>
-              <th>Data do Diagnóstico</th>
+              <th>Perfil</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -64,14 +63,13 @@
                 <td><%= diag.email_usuario || "-" %></td>
                 <td>
                   <span class="badge badge-<%= diag.nivel_autonomia %>">
-                    <%= diag.nivel_autonomia %>
+                    <%= rotulosNivel[diag.nivel_autonomia] || diag.nivel_autonomia %>
                   </span>
                 </td>
-                <td>—</td>
                 <td>
                   <form method="POST" action="/admin/diagnosticos/deletar/<%= diag.id_diagnostico %>" class="form-inline"
                         onsubmit="return confirm('Tem certeza que deseja deletar este diagnóstico?')">
-                    <button type="submit" class="btn btn-tiny btn-danger">🗑️ Deletar</button>
+                    <button type="submit" class="btn btn-tiny btn-danger">Deletar</button>
                   </form>
                 </td>
               </tr>
@@ -81,7 +79,7 @@
       </section>
     <% } else { %>
       <section class="empty-state">
-        <p>📭 Nenhum diagnóstico realizado ainda</p>
+        <p>Nenhum diagnóstico realizado ainda</p>
         <a href="/diagnostico" class="btn btn-primary">Realizar Diagnóstico</a>
       </section>
     <% } %>

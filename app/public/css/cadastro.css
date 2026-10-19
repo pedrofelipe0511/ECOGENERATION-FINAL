@@ -131,7 +131,7 @@ h1.ui.header {
 
 
 
-  footer {
+  footer:where(.site-footer) {
     text-align: center;
     background-color: #A0D995;
     padding: 1em 0;

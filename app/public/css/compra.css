@@ -451,3 +451,11 @@
 .kit-compra-lista .kit-compra-item {
   margin: 0;
 }
+
+/* Resultado do pagamento no modo escuro */
+[data-theme="dark"] .sucesso-card { background: #1e1e1e; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+[data-theme="dark"] .sucesso-card h1 { color: #81c784; }
+[data-theme="dark"] .sucesso-subtitulo { color: #c8c8c8; }
+[data-theme="dark"] .sucesso-detalhes { background: #262626; }
+[data-theme="dark"] .sucesso-detalhes p,
+[data-theme="dark"] .sucesso-detalhes strong { color: #dddddd; }

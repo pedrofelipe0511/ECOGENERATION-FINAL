@@ -46,9 +46,10 @@
     <header class="perfil-header">
       <figure class="perfil-avatar">
           <% if (usuario.imagem_perfil_usuario) { %>
-            <img src="/<%= usuario.imagem_perfil_usuario %>" alt="Foto de perfil de <%= usuario.nome_usuario %>">
+            <%# Se o arquivo enviado não existir mais, mostra a logo no lugar %>
+            <img src="/<%= usuario.imagem_perfil_usuario %>" alt="Foto de perfil de <%= usuario.nome_usuario %>" onerror="this.onerror=null;this.src='/imagens/avatar-padrao.svg';this.classList.add('avatar-padrao')">
           <% } else { %>
-            <img src="/imagens/favicon2.png" alt="Imagem padrão de perfil">
+            <img src="/imagens/avatar-padrao.svg" class="avatar-padrao" alt="">
           <% } %>
       </figure>
       <section class="perfil-info" aria-label="Dados do usuário">
@@ -79,7 +80,7 @@
           <input id="complemento" name="complemento" type="text" value="<%= usuario.complemento_usuario || '' %>" maxlength="100">
           <label for="imagem">Imagem de perfil</label>
           <input id="imagem" name="imagem" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
-          <img id="preview-imagem" class="perfil-preview" src="<%= usuario.imagem_perfil_usuario ? '/' + usuario.imagem_perfil_usuario : '/imagens/favicon2.png' %>" alt="Prévia da imagem de perfil">
+          <img id="preview-imagem" class="perfil-preview<%= usuario.imagem_perfil_usuario ? '' : ' avatar-padrao' %>" src="<%= usuario.imagem_perfil_usuario ? '/' + usuario.imagem_perfil_usuario : '/imagens/avatar-padrao.svg' %>" alt="Prévia da imagem de perfil" onerror="this.onerror=null;this.src='/imagens/avatar-padrao.svg';this.classList.add('avatar-padrao')">
           <label for="senha_atual">Senha atual</label>
           <input id="senha_atual" name="senha_atual" type="password" minlength="6" maxlength="72" autocomplete="current-password" placeholder="Digite sua senha atual">
           <label for="senha">Nova senha</label>
@@ -144,14 +145,14 @@
           <% diagnosticos.forEach(function(diag) { %>
             <li class="diagnostico-item">
               <header class="diagnostico-nivel <%= diag.nivel_autonomia %>">
-                <strong>Autonomia <%= diag.nivel_autonomia %></strong>
+                <strong>Perfil: <%= rotular(rotulosDiagnostico.nivel, diag.nivel_autonomia) %></strong>
               </header>
               <section class="diagnostico-detalhes" aria-label="Detalhes do diagnóstico">
-                <p><strong>Frequência:</strong> <%= diag.frequencia %></p>
-                <p><strong>Impacto:</strong> <%= diag.impacto %></p>
-                <p><strong>Preparação:</strong> <%= diag.preparacao %></p>
-                <p><strong>Prioridade:</strong> <%= diag.prioridade %></p>
-                <p><strong>Tolerância:</strong> <%= diag.tolerancia %></p>
+                <p><strong>Falta de energia:</strong> <%= rotular(rotulosDiagnostico.frequencia, diag.frequencia) %></p>
+                <p><strong>Duração:</strong> <%= rotular(rotulosDiagnostico.duracao, diag.impacto) %></p>
+                <p><strong>Já tem em casa:</strong> <%= rotular(rotulosDiagnostico.preparacao, diag.preparacao) %></p>
+                <p><strong>Quer manter ligado:</strong> <%= rotular(rotulosDiagnostico.aparelhos, diag.prioridade) %></p>
+                <p><strong>Moradia:</strong> <%= rotular(rotulosDiagnostico.moradia, diag.tolerancia) %></p>
               </section>
               <footer class="diagnostico-acoes">
                 <a href="/diagnostico" class="btn-refazer">Refazer diagnóstico</a>
@@ -205,7 +206,9 @@
     const previewImagem = document.getElementById('preview-imagem');
     if (imagemInput && previewImagem) imagemInput.addEventListener('change', () => {
       const arquivo = imagemInput.files[0];
-      if (arquivo) previewImagem.src = URL.createObjectURL(arquivo);
+      if (!arquivo) return;
+      previewImagem.classList.remove('avatar-padrao');
+      previewImagem.src = URL.createObjectURL(arquivo);
     });
   </script>
 </body>

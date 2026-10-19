@@ -31,9 +31,7 @@
     border-radius: 5px;
     border: 1px solid #ddd;
 }
-.diagnostico-header{
-    background-color: #ffffff;
-}
+/* sem fundo próprio: herda o da página (no modo escuro o texto claro continua legível) */
 
 .pergunta h3 {
     margin-bottom: 10px;
@@ -180,3 +178,5 @@
   text-align: left;
 }
 .resultado-foco strong { color: #256029; }
+
+[data-theme="dark"] .progresso-texto { color: #b8b8b8; }

@@ -15,6 +15,7 @@ const verificarToken = (token) => jwt.verify(token, getSecret());
 const impressaoSenha = (hashSenha) =>
     crypto.createHash('sha256').update(String(hashSenha)).digest('hex').slice(0, 16);
 
-const getBaseUrl = () => process.env.APP_BASE_URL || `http://localhost:${process.env.APP_PORT || 3000}`;
+// Sem barra no final, para não gerar "//feedback" nos links
+const getBaseUrl = () => (process.env.APP_BASE_URL || `http://localhost:${process.env.APP_PORT || 3000}`).trim().replace(/\/+$/, '');
 
 module.exports = { criarToken, verificarToken, impressaoSenha, getBaseUrl };

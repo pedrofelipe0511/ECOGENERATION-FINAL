@@ -40,6 +40,37 @@
   object-fit: cover;
 }
 
+/* Prévia da nova foto no formulário */
+.perfil-preview {
+  display: block;
+  width: 96px;
+  height: 96px;
+  margin: 0.25rem 0 0.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #dfe8df;
+}
+
+/* Sem foto: a logo da EcoGeneration num círculo verde-claro */
+.perfil-avatar:has(.avatar-padrao),
+.perfil-preview.avatar-padrao {
+  background: #e8f5e9;
+}
+
+.perfil-avatar img.avatar-padrao,
+.perfil-preview.avatar-padrao {
+  object-fit: contain;
+  padding: 14px; /* valor fixo: em % seria calculado pela largura do formulário */
+  box-sizing: border-box;
+}
+
+.perfil-preview.avatar-padrao { padding: 18px; }
+
+[data-theme="dark"] .perfil-avatar:has(.avatar-padrao),
+[data-theme="dark"] .perfil-preview.avatar-padrao {
+  background: #dcedc8;
+}
+
 .perfil-form {
   display: grid;
   gap: 0.5rem;
@@ -192,6 +223,10 @@
 .diagnostico-nivel.alta { background: #e8f5e9; color: #1b5e20; }
 .diagnostico-nivel.media { background: #fff8e1; color: #e65100; }
 .diagnostico-nivel.baixa { background: #ffebee; color: #b71c1c; }
+.diagnostico-nivel.independente { background: #e8f5e9; color: #1b5e20; }
+.diagnostico-nivel.preventivo { background: #e3f2fd; color: #0d47a1; }
+.diagnostico-nivel.medio { background: #fff8e1; color: #8a4b00; }
+.diagnostico-nivel.critico { background: #ffebee; color: #b71c1c; }
 
 .diagnostico-detalhes {
   padding: 1rem;
@@ -388,6 +423,10 @@
 }
 
 [data-theme="dark"] .diagnostico-nivel.alta { background: #1b5e20; color: #e0e0e0; }
+[data-theme="dark"] .diagnostico-nivel.independente { background: #1b5e20; color: #e8f5e9; }
+[data-theme="dark"] .diagnostico-nivel.preventivo { background: #0d3a66; color: #e3f2fd; }
+[data-theme="dark"] .diagnostico-nivel.medio { background: #5c3d00; color: #ffe0a3; }
+[data-theme="dark"] .diagnostico-nivel.critico { background: #6b1a1a; color: #ffdada; }
 [data-theme="dark"] .diagnostico-nivel.media { background: #f57c00; color: #000; }
 [data-theme="dark"] .diagnostico-nivel.baixa { background: #d32f2f; color: #e0e0e0; }
 
@@ -404,10 +443,14 @@
   color: #7fcf80;
 }
 
+[data-theme="dark"] .perfil-perigo { border-color: #5c2b2b; }
+[data-theme="dark"] .perfil-perigo h2 { color: #ef9a9a; border-bottom-color: #5c2b2b; }
+[data-theme="dark"] .perfil-perigo p { color: #d0d0d0; }
+
 [data-theme="dark"] .btn-excluir {
   background: none;
-  border-color: #c62828;
-  color: #c62828;
+  border-color: #ef9a9a;
+  color: #ef9a9a;
 }
 
 [data-theme="dark"] .btn-excluir:hover {
